@@ -8,9 +8,12 @@ import CallKit
 
 struct ContentView: View {
     @State private var isBlockerEnabled: Bool = false
-    @State private var statusMessage: String = "Vérification du statut..."
-    @State private var reloadStatusMessage: String = ""
-    @State private var timer: Timer? = nil
+    @State private var blockerStatusMessage: String = "Vérification du statut..."
+    @State private var blockerUpdateStatusMessage: String = ""
+    @State private var statusTimer: Timer? = nil
+    @State private var updateTimer: Timer? = nil
+    
+    let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
     
     var body: some View {
         VStack {
@@ -29,7 +32,7 @@ struct ContentView: View {
             HStack {
                 Image(systemName: isBlockerEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .foregroundColor(isBlockerEnabled ? .green : .red)
-                Text(statusMessage)
+                Text(blockerStatusMessage)
             }
             .padding(.top)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -43,16 +46,18 @@ struct ContentView: View {
                 .foregroundColor(.white)
                 .cornerRadius(8)
             } else {
+                Text("\(blockerUpdateStatusMessage)")
+                    .font(.footnote)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top)
+
                 Button("Recharger la liste des numéros de téléphone") {
-                    reloadCallKitExtension()
+                    reloadBlockerListExtension()
                 }
                 .padding()
                 .background(Color.orange)
                 .foregroundColor(.white)
                 .cornerRadius(8)
-
-                Text(reloadStatusMessage)
-                .padding(.top)
             }
             
             Text("Liste des préfixes bloqués par l'application :")
@@ -69,14 +74,15 @@ struct ContentView: View {
                 .padding(.top)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+        .padding()
         .onAppear {
             checkBlockerStatus()
-            reloadCallKitExtension()
-            startTimer()
+            startStatusTimer()
+            startUpdateTimer()
         }
         .onDisappear {
-            stopTimer()
+            stopStatusTimer()
+            stopUpdateTimer()
         }
     }
     
@@ -85,53 +91,83 @@ struct ContentView: View {
         
         manager.getEnabledStatusForExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { status, error in
             DispatchQueue.main.async {
-                if let error = error {
-                    self.statusMessage = "Erreur: \(error.localizedDescription)"
+                if error != nil {
                     self.isBlockerEnabled = false
+                    self.blockerStatusMessage = "Erreur"
                     return
                 }
                 
                 switch status {
                 case .enabled:
                     self.isBlockerEnabled = true
-                    self.statusMessage = "Le bloqueur d'appels est actif"
+                    self.blockerStatusMessage = "Le bloqueur d'appels est actif"
                 case .disabled:
                     self.isBlockerEnabled = false
-                    self.statusMessage = "Le bloqueur d'appels est désactivé"
+                    self.blockerStatusMessage = "Le bloqueur d'appels est désactivé"
                 case .unknown:
                     self.isBlockerEnabled = false
-                    self.statusMessage = "Statut inconnu"
+                    self.blockerStatusMessage = "Statut inconnu"
                 @unknown default:
                     self.isBlockerEnabled = false
-                    self.statusMessage = "Statut inattendu"
+                    self.blockerStatusMessage = "Statut inattendu"
                 }
             }
         }
     }
+
+    private func updateBlockerStatusMessage() {
+        let updateStatus = sharedUserDefaults?.string(forKey: "updateStatus") ?? ""
+        let blockedNumbers = sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0
+        let totalBlockedNumbers = sharedUserDefaults?.integer(forKey: "totalBlockedNumbers") ?? 0
+        let lastUpdate = sharedUserDefaults?.object(forKey: "lastUpdate") ?? nil
+        
+        if updateStatus == "finish" {
+            self.blockerUpdateStatusMessage = "\(blockedNumbers) numéros bloqués 🥳, mise à jour faite le \(lastUpdate!)"
+        } else if updateStatus == "start" {
+            if blockedNumbers == 0 {
+                self.blockerUpdateStatusMessage = "Mise à jour en cours... démarrage"
+            } else {
+                self.blockerUpdateStatusMessage = "Mise à jour en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers)"
+            }
+        } else {
+            self.blockerUpdateStatusMessage = "Aucun numéro bloqué, rechargez la liste"
+        }
+    }
     
-    private func reloadCallKitExtension() {
+    private func reloadBlockerListExtension() {
+        self.sharedUserDefaults?.set("start", forKey: "updateStatus")
+        self.sharedUserDefaults?.set(0, forKey: "blockedNumbers")
+
         let manager = CXCallDirectoryManager.sharedInstance
         manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
             DispatchQueue.main.async {
-                if let error = error {
-                    self.reloadStatusMessage = "Erreur de rechargement de la liste des numéros de téléphone"
-                } else {
-                    self.reloadStatusMessage = "La liste des numéros de téléphone a été rechargée avec succès"
-                    self.checkBlockerStatus()
+                if (error != nil) {
+                    self.blockerStatusMessage = "Erreur lors du rechargement"
                 }
             }
         }
     }
     
-    private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+    private func startStatusTimer() {
+        statusTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             self.checkBlockerStatus()
         }
     }
     
-    private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
+    private func stopStatusTimer() {
+        statusTimer?.invalidate()
+        statusTimer = nil
+    }
+
+    private func startUpdateTimer() {
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { _ in
+            self.updateBlockerStatusMessage()
+        }
+    }
+    
+    private func stopUpdateTimer() {
+        updateTimer?.invalidate()
+        updateTimer = nil
     }
     
     private func openSettings() {
