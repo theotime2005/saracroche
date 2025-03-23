@@ -2,26 +2,25 @@
 //  ContentView.swift
 //  saracroche
 //
-//  Created by Camille Bouvat on 23/03/2025.
-//
 
 import SwiftUI
 import CallKit
 
 struct ContentView: View {
     @State private var isBlockerEnabled: Bool = false
-    @State private var statusMessage: String = "Checking status..."
+    @State private var statusMessage: String = "Vérification du statut..."
+    @State private var reloadStatusMessage: String = ""
     
     var body: some View {
         VStack {
             Image(systemName: "phone")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Saracroche !")
+            Text("Saracroche")
             
             Spacer().frame(height: 20)
             
-            Text("Call Blocker Status:")
+            Text("Statut du bloqueur d'appels")
                 .font(.headline)
                 .padding(.top)
             
@@ -32,13 +31,24 @@ struct ContentView: View {
             }
             .padding()
             
-            Button("Check Status") {
+            Button("Vérifier le statut") {
                 checkBlockerStatus()
             }
             .padding()
             .background(Color.blue)
             .foregroundColor(.white)
             .cornerRadius(8)
+            
+            Button("Recharger l'extension") {
+                reloadCallKitExtension()
+            }
+            .padding()
+            .background(Color.orange)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+            
+            Text(reloadStatusMessage)
+                .padding(.top)
         }
         .padding()
         .onAppear {
@@ -52,7 +62,7 @@ struct ContentView: View {
         manager.getEnabledStatusForExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { status, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self.statusMessage = "Error: \(error.localizedDescription)"
+                    self.statusMessage = "Erreur: \(error.localizedDescription)"
                     self.isBlockerEnabled = false
                     return
                 }
@@ -60,16 +70,30 @@ struct ContentView: View {
                 switch status {
                 case .enabled:
                     self.isBlockerEnabled = true
-                    self.statusMessage = "Call blocker is active"
+                    self.statusMessage = "Le bloqueur d'appels est actif"
                 case .disabled:
                     self.isBlockerEnabled = false
-                    self.statusMessage = "Call blocker is disabled"
+                    self.statusMessage = "Le bloqueur d'appels est désactivé"
                 case .unknown:
                     self.isBlockerEnabled = false
-                    self.statusMessage = "Status unknown"
+                    self.statusMessage = "Statut inconnu"
                 @unknown default:
                     self.isBlockerEnabled = false
-                    self.statusMessage = "Unexpected status"
+                    self.statusMessage = "Statut inattendu"
+                }
+            }
+        }
+    }
+    
+    private func reloadCallKitExtension() {
+        let manager = CXCallDirectoryManager.sharedInstance
+        manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.reloadStatusMessage = "Erreur de rechargement: \(error.localizedDescription)"
+                } else {
+                    self.reloadStatusMessage = "Extension rechargée avec succès"
+                    self.checkBlockerStatus()
                 }
             }
         }
