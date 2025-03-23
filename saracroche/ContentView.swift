@@ -14,23 +14,25 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Image(systemName: "phone")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
             Text("Saracroche")
-            
-            Spacer().frame(height: 20)
-            
+                .font(.largeTitle)
+                .fontWeight(.heavy)
+                .foregroundColor(Color("AccentColor"))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                
             Text("Statut du bloqueur d'appels")
                 .font(.headline)
                 .padding(.top)
+                .frame(maxWidth: .infinity, alignment: .leading)
             
             HStack {
                 Image(systemName: isBlockerEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .foregroundColor(isBlockerEnabled ? .green : .red)
                 Text(statusMessage)
             }
-            .padding()
+            .padding(.top)
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             if !isBlockerEnabled {
                 Button("Activer dans les réglages") {
@@ -40,9 +42,7 @@ struct ContentView: View {
                 .background(Color.blue)
                 .foregroundColor(.white)
                 .cornerRadius(8)
-            }
-            
-            if isBlockerEnabled {
+            } else {
                 Button("Recharger la liste des numéros de téléphone") {
                     reloadCallKitExtension()
                 }
@@ -62,7 +62,6 @@ struct ContentView: View {
 
             Text("0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, 09475 à 09479")
                 .font(.footnote)
-                .padding(.top)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("Les numéros de téléphone présents dans vos contacts ne seront pas bloqués.")
@@ -70,7 +69,7 @@ struct ContentView: View {
                 .padding(.top)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding()
+        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
         .onAppear {
             checkBlockerStatus()
             reloadCallKitExtension()
