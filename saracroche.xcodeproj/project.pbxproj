@@ -40,6 +40,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8593F3A72D90CAB9007C294B /* Exceptions for "saracroche" folder in "saracroche" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 853F84872D904A1B00279342 /* saracroche */;
+		};
 		85C9CE9E2D904D8C00584259 /* Exceptions for "blocker" folder in "blocker" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -52,6 +59,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		853F848A2D904A1B00279342 /* saracroche */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8593F3A72D90CAB9007C294B /* Exceptions for "saracroche" folder in "saracroche" target */,
+			);
 			path = saracroche;
 			sourceTree = "<group>";
 		};
@@ -362,6 +372,7 @@
 				DEVELOPMENT_TEAM = UQZ9E7YS88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = saracroche/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Saracroche;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -399,6 +410,7 @@
 				DEVELOPMENT_TEAM = UQZ9E7YS88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = saracroche/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Saracroche;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
