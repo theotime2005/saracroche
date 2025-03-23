@@ -2,8 +2,6 @@
 //  CallDirectoryHandler.swift
 //  blocker
 //
-//  Created by Camille Bouvat on 23/03/2025.
-//
 
 import Foundation
 import CallKit
@@ -12,83 +10,44 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
     override func beginRequest(with context: CXCallDirectoryExtensionContext) {
         context.delegate = self
-
-        // Check whether this is an "incremental" data request. If so, only provide the set of phone number blocking
-        // and identification entries which have been added or removed since the last time this extension's data was loaded.
-        // But the extension must still be prepared to provide the full set of data at any time, so add all blocking
-        // and identification phone numbers if the request is not incremental.
+        
         if context.isIncremental {
-            addOrRemoveIncrementalBlockingPhoneNumbers(to: context)
-
-            addOrRemoveIncrementalIdentificationPhoneNumbers(to: context)
-        } else {
-            addAllBlockingPhoneNumbers(to: context)
-
-            addAllIdentificationPhoneNumbers(to: context)
+            print("Incremental")
         }
+        
+        resetBlockPhoneNumbers(context: context)
+
+        blockPhoneNumbers(context: context, start: 33162000000, end: 33162999999)
+        blockPhoneNumbers(context: context, start: 33163000000, end: 33163999999)
+        blockPhoneNumbers(context: context, start: 33271000000, end: 33271999999)
+        blockPhoneNumbers(context: context, start: 33377000000, end: 33377999999)
+        blockPhoneNumbers(context: context, start: 33378000000, end: 33378999999)
+        blockPhoneNumbers(context: context, start: 33424000000, end: 33424999999)
+        blockPhoneNumbers(context: context, start: 33425000000, end: 33425999999)
+        blockPhoneNumbers(context: context, start: 33568000000, end: 33568999999)
+        blockPhoneNumbers(context: context, start: 33569000000, end: 33569999999)
+        blockPhoneNumbers(context: context, start: 33948000000, end: 33948999999)
+        blockPhoneNumbers(context: context, start: 33947500000, end: 33947599999)
+        blockPhoneNumbers(context: context, start: 33947600000, end: 33947699999)
+        blockPhoneNumbers(context: context, start: 33947700000, end: 33947799999)
+        blockPhoneNumbers(context: context, start: 33947800000, end: 33947899999)
+        blockPhoneNumbers(context: context, start: 33947900000, end: 33947999999)
 
         context.completeRequest()
     }
-
-    private func addAllBlockingPhoneNumbers(to context: CXCallDirectoryExtensionContext) {
-        // Retrieve all phone numbers to block from data store. For optimal performance and memory usage when there are many phone numbers,
-        // consider only loading a subset of numbers at a given time and using autorelease pool(s) to release objects allocated during each batch of numbers which are loaded.
-        //
-        // Numbers must be provided in numerically ascending order.
-        let allPhoneNumbers: [CXCallDirectoryPhoneNumber] = [ 1_408_555_5555, 1_800_555_5555 ]
-        for phoneNumber in allPhoneNumbers {
-            context.addBlockingEntry(withNextSequentialPhoneNumber: phoneNumber)
+    
+    func blockPhoneNumbers(context: CXCallDirectoryExtensionContext, start: Int64, end: Int64) {
+        print("Blocking numbers from \(start) to \(end)")
+        for number in start...end {
+            context.addBlockingEntry(withNextSequentialPhoneNumber: number)
+            context.addIdentificationEntry(withNextSequentialPhoneNumber: number, label: "🚫 démarchage")
         }
     }
 
-    private func addOrRemoveIncrementalBlockingPhoneNumbers(to context: CXCallDirectoryExtensionContext) {
-        // Retrieve any changes to the set of phone numbers to block from data store. For optimal performance and memory usage when there are many phone numbers,
-        // consider only loading a subset of numbers at a given time and using autorelease pool(s) to release objects allocated during each batch of numbers which are loaded.
-        let phoneNumbersToAdd: [CXCallDirectoryPhoneNumber] = [ 1_408_555_1234 ]
-        for phoneNumber in phoneNumbersToAdd {
-            context.addBlockingEntry(withNextSequentialPhoneNumber: phoneNumber)
-        }
-
-        let phoneNumbersToRemove: [CXCallDirectoryPhoneNumber] = [ 1_800_555_5555 ]
-        for phoneNumber in phoneNumbersToRemove {
-            context.removeBlockingEntry(withPhoneNumber: phoneNumber)
-        }
-
-        // Record the most-recently loaded set of blocking entries in data store for the next incremental load...
+    func resetBlockPhoneNumbers(context: CXCallDirectoryExtensionContext) {
+        context.removeAllBlockingEntries()
+        context.removeAllIdentificationEntries()
     }
-
-    private func addAllIdentificationPhoneNumbers(to context: CXCallDirectoryExtensionContext) {
-        // Retrieve phone numbers to identify and their identification labels from data store. For optimal performance and memory usage when there are many phone numbers,
-        // consider only loading a subset of numbers at a given time and using autorelease pool(s) to release objects allocated during each batch of numbers which are loaded.
-        //
-        // Numbers must be provided in numerically ascending order.
-        let allPhoneNumbers: [CXCallDirectoryPhoneNumber] = [ 1_877_555_5555, 1_888_555_5555 ]
-        let labels = [ "Telemarketer", "Local business" ]
-
-        for (phoneNumber, label) in zip(allPhoneNumbers, labels) {
-            context.addIdentificationEntry(withNextSequentialPhoneNumber: phoneNumber, label: label)
-        }
-    }
-
-    private func addOrRemoveIncrementalIdentificationPhoneNumbers(to context: CXCallDirectoryExtensionContext) {
-        // Retrieve any changes to the set of phone numbers to identify (and their identification labels) from data store. For optimal performance and memory usage when there are many phone numbers,
-        // consider only loading a subset of numbers at a given time and using autorelease pool(s) to release objects allocated during each batch of numbers which are loaded.
-        let phoneNumbersToAdd: [CXCallDirectoryPhoneNumber] = [ 1_408_555_5678 ]
-        let labelsToAdd = [ "New local business" ]
-
-        for (phoneNumber, label) in zip(phoneNumbersToAdd, labelsToAdd) {
-            context.addIdentificationEntry(withNextSequentialPhoneNumber: phoneNumber, label: label)
-        }
-
-        let phoneNumbersToRemove: [CXCallDirectoryPhoneNumber] = [ 1_888_555_5555 ]
-
-        for phoneNumber in phoneNumbersToRemove {
-            context.removeIdentificationEntry(withPhoneNumber: phoneNumber)
-        }
-
-        // Record the most-recently loaded set of identification entries in data store for the next incremental load...
-    }
-
 }
 
 extension CallDirectoryHandler: CXCallDirectoryExtensionContextDelegate {
