@@ -12,26 +12,26 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         context.delegate = self
         
         if context.isIncremental {
-            print("Incremental")
+            print("Incremental update")
+            resetBlockPhoneNumbers(context: context)
+            blockPhoneNumbers(context: context, start: 33162000000, end: 33162999999)
+            blockPhoneNumbers(context: context, start: 33163000000, end: 33163999999)
+            blockPhoneNumbers(context: context, start: 33271000000, end: 33271999999)
+            blockPhoneNumbers(context: context, start: 33377000000, end: 33377999999)
+            blockPhoneNumbers(context: context, start: 33378000000, end: 33378999999)
+            blockPhoneNumbers(context: context, start: 33424000000, end: 33424999999)
+            blockPhoneNumbers(context: context, start: 33425000000, end: 33425999999)
+            blockPhoneNumbers(context: context, start: 33568000000, end: 33568999999)
+            blockPhoneNumbers(context: context, start: 33569000000, end: 33569999999)
+            blockPhoneNumbers(context: context, start: 33948000000, end: 33948999999)
+            blockPhoneNumbers(context: context, start: 33947500000, end: 33947599999)
+            blockPhoneNumbers(context: context, start: 33947600000, end: 33947699999)
+            blockPhoneNumbers(context: context, start: 33947700000, end: 33947799999)
+            blockPhoneNumbers(context: context, start: 33947800000, end: 33947899999)
+            blockPhoneNumbers(context: context, start: 33947900000, end: 33947999999)
+        } else {
+            print("No incremental update")
         }
-        
-        resetBlockPhoneNumbers(context: context)
-
-        blockPhoneNumbers(context: context, start: 33162000000, end: 33162999999)
-        blockPhoneNumbers(context: context, start: 33163000000, end: 33163999999)
-        blockPhoneNumbers(context: context, start: 33271000000, end: 33271999999)
-        blockPhoneNumbers(context: context, start: 33377000000, end: 33377999999)
-        blockPhoneNumbers(context: context, start: 33378000000, end: 33378999999)
-        blockPhoneNumbers(context: context, start: 33424000000, end: 33424999999)
-        blockPhoneNumbers(context: context, start: 33425000000, end: 33425999999)
-        blockPhoneNumbers(context: context, start: 33568000000, end: 33568999999)
-        blockPhoneNumbers(context: context, start: 33569000000, end: 33569999999)
-        blockPhoneNumbers(context: context, start: 33948000000, end: 33948999999)
-        blockPhoneNumbers(context: context, start: 33947500000, end: 33947599999)
-        blockPhoneNumbers(context: context, start: 33947600000, end: 33947699999)
-        blockPhoneNumbers(context: context, start: 33947700000, end: 33947799999)
-        blockPhoneNumbers(context: context, start: 33947800000, end: 33947899999)
-        blockPhoneNumbers(context: context, start: 33947900000, end: 33947999999)
 
         context.completeRequest()
     }
