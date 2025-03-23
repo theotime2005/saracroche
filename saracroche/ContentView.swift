@@ -39,7 +39,7 @@ struct ContentView: View {
             .foregroundColor(.white)
             .cornerRadius(8)
             
-            Button("Recharger l'extension") {
+            Button("Recharger la liste des numéros de téléphone") {
                 reloadCallKitExtension()
             }
             .padding()
@@ -49,10 +49,23 @@ struct ContentView: View {
             
             Text(reloadStatusMessage)
                 .padding(.top)
+            
+            Text("Les numéros de téléphone présents dans vos contacts ne seront pas bloqués.")
+                .font(.footnote)
+                .padding(.top)
+            
+            Text("Liste des préfixes bloqués par l'application :")
+                .font(.headline)
+                .padding(.top)
+            
+            Text("0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, 09475 à 09479")
+                .font(.footnote)
+                .padding(.top)
         }
         .padding()
         .onAppear {
             checkBlockerStatus()
+            reloadCallKitExtension()
         }
     }
     
@@ -90,9 +103,9 @@ struct ContentView: View {
         manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self.reloadStatusMessage = "Erreur de rechargement: \(error.localizedDescription)"
+                    self.reloadStatusMessage = "Erreur de rechargement de la liste des numéros de téléphone: \(error.localizedDescription)"
                 } else {
-                    self.reloadStatusMessage = "Extension rechargée avec succès"
+                    self.reloadStatusMessage = "La liste des numéros de téléphone a été rechargée avec succès"
                     self.checkBlockerStatus()
                 }
             }
