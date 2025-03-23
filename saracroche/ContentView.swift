@@ -60,7 +60,7 @@ struct ContentView: View {
                 .padding(.top)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, 09475 à 09479")
+            Text("0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, 09475 à 09479. Cette liste est basée sur les numéros du plan de numérotation français fournis par l'ARCEP.")
                 .font(.footnote)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
