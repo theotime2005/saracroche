@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var isBlockerEnabled: Bool = false
     @State private var statusMessage: String = "Vérification du statut..."
     @State private var reloadStatusMessage: String = ""
+    @State private var timer: Timer? = nil
     
     var body: some View {
         VStack {
@@ -31,41 +32,52 @@ struct ContentView: View {
             }
             .padding()
             
-            Button("Vérifier le statut") {
-                checkBlockerStatus()
+            if !isBlockerEnabled {
+                Button("Activer dans les réglages") {
+                    openSettings()
+                }
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
             }
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
             
-            Button("Recharger la liste des numéros de téléphone") {
-                reloadCallKitExtension()
+            if isBlockerEnabled {
+                Button("Recharger la liste des numéros de téléphone") {
+                    reloadCallKitExtension()
+                }
+                .padding()
+                .background(Color.orange)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+
+                Text(reloadStatusMessage)
+                .padding(.top)
             }
-            .padding()
-            .background(Color.orange)
-            .foregroundColor(.white)
-            .cornerRadius(8)
-            
-            Text(reloadStatusMessage)
-                .padding(.top)
-            
-            Text("Les numéros de téléphone présents dans vos contacts ne seront pas bloqués.")
-                .font(.footnote)
-                .padding(.top)
             
             Text("Liste des préfixes bloqués par l'application :")
                 .font(.headline)
                 .padding(.top)
-            
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             Text("0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, 09475 à 09479")
                 .font(.footnote)
                 .padding(.top)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text("Les numéros de téléphone présents dans vos contacts ne seront pas bloqués.")
+                .font(.footnote)
+                .padding(.top)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding()
         .onAppear {
             checkBlockerStatus()
             reloadCallKitExtension()
+            startTimer()
+        }
+        .onDisappear {
+            stopTimer()
         }
     }
     
@@ -103,13 +115,33 @@ struct ContentView: View {
         manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self.reloadStatusMessage = "Erreur de rechargement de la liste des numéros de téléphone: \(error.localizedDescription)"
+                    self.reloadStatusMessage = "Erreur de rechargement de la liste des numéros de téléphone"
                 } else {
                     self.reloadStatusMessage = "La liste des numéros de téléphone a été rechargée avec succès"
                     self.checkBlockerStatus()
                 }
             }
         }
+    }
+    
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.checkBlockerStatus()
+        }
+    }
+    
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    private func openSettings() {
+        let manager = CXCallDirectoryManager.sharedInstance
+        manager.openSettings(completionHandler: { error in
+            if let error = error {
+                print("Erreur lors de l'ouverture des réglages: \(error.localizedDescription)")
+            }
+        })
     }
 }
 
