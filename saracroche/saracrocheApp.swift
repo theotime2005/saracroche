@@ -2,8 +2,6 @@
 //  saracrocheApp.swift
 //  saracroche
 //
-//  Created by Camille Bouvat on 23/03/2025.
-//
 
 import SwiftUI
 
