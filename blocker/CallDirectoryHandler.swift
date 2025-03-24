@@ -65,7 +65,7 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
       blockedNumbers += 1
 
-      if blockedNumbers % 100 == 0 {
+      if blockedNumbers % 10 == 0 {
         sharedUserDefaults?.set(blockedNumbers, forKey: "blockedNumbers")
       }
     }
