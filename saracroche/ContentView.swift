@@ -122,12 +122,12 @@ struct ContentView: View {
         let lastUpdate = sharedUserDefaults?.object(forKey: "lastUpdate") ?? nil
         
         if updateStatus == "finish" {
-            self.blockerUpdateStatusMessage = "\(blockedNumbers) numéros bloqués 🥳, mise à jour faite le \(lastUpdate!)"
+            self.blockerUpdateStatusMessage = "\(blockedNumbers) numéros bloqués, mise à jour faite le \(lastUpdate!)"
         } else if updateStatus == "start" {
             if blockedNumbers == 0 {
-                self.blockerUpdateStatusMessage = "Mise à jour en cours... démarrage"
+                self.blockerUpdateStatusMessage = "Mise à jour en cours... démarrage de la mise à jour, garder l'application ouverte"
             } else {
-                self.blockerUpdateStatusMessage = "Mise à jour en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers)"
+                self.blockerUpdateStatusMessage = "Mise à jour en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers) numéros, gardez l'application ouverte"
             }
         } else {
             self.blockerUpdateStatusMessage = "Aucun numéro bloqué, rechargez la liste"
@@ -149,7 +149,7 @@ struct ContentView: View {
     }
     
     private func startStatusTimer() {
-        statusTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        statusTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
             self.checkBlockerStatus()
         }
     }
@@ -160,7 +160,7 @@ struct ContentView: View {
     }
 
     private func startUpdateTimer() {
-        updateTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { _ in
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
             self.updateBlockerStatusMessage()
         }
     }
