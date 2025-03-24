@@ -43,7 +43,7 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
             resetBlockPhoneNumbers(context: context)
 
             for range in CallDirectoryHandler.phoneNumberRanges {
-                blockPhoneNumbers(context: context, start: range.start, end: range.end, blockedNumbers: &blockedNumbers, totalBlockedNumbers: totalBlockedNumbers)
+                blockPhoneNumbers(context: context, start: range.start, end: range.end, blockedNumbers: &blockedNumbers)
             }
 
             sharedUserDefaults?.set("finish", forKey: "updateStatus")
@@ -53,16 +53,20 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         context.completeRequest()
     }
     
-    func blockPhoneNumbers(context: CXCallDirectoryExtensionContext, start: Int64, end: Int64, blockedNumbers: inout Int64, totalBlockedNumbers: Int64) {
+    func blockPhoneNumbers(context: CXCallDirectoryExtensionContext, start: Int64, end: Int64, blockedNumbers: inout Int64) {
         NSLog("Start blocking numbers from \(start) to \(end)")
         for number in start...end {
+            // Add the number to the blocking list
             context.addBlockingEntry(withNextSequentialPhoneNumber: number)
-            context.addIdentificationEntry(withNextSequentialPhoneNumber: number, label: "🚫 démarchage")
+            
             blockedNumbers += 1
             
-            if blockedNumbers % 100000 == 0 {
+            if blockedNumbers % 1000 == 0 {
                 sharedUserDefaults?.set(blockedNumbers, forKey: "blockedNumbers")
             }
+        
+            // Add the number to the identification list
+            context.addIdentificationEntry(withNextSequentialPhoneNumber: number, label: "🚫 démarchage")
         }
     }
 
