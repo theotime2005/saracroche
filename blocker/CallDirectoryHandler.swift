@@ -54,19 +54,17 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
     }
     
     func blockPhoneNumbers(context: CXCallDirectoryExtensionContext, start: Int64, end: Int64, blockedNumbers: inout Int64) {
-        NSLog("Start blocking numbers from \(start) to \(end)")
         for number in start...end {
             // Add the number to the blocking list
             context.addBlockingEntry(withNextSequentialPhoneNumber: number)
-            
-            blockedNumbers += 1
-            
-            if blockedNumbers % 1000 == 0 {
-                sharedUserDefaults?.set(blockedNumbers, forKey: "blockedNumbers")
-            }
-        
             // Add the number to the identification list
             context.addIdentificationEntry(withNextSequentialPhoneNumber: number, label: "🚫 démarchage")
+
+            blockedNumbers += 1
+            
+            if blockedNumbers % 100 == 0 {
+                sharedUserDefaults?.set(blockedNumbers, forKey: "blockedNumbers")
+            }         
         }
     }
 
