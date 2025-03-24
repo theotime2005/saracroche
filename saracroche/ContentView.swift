@@ -48,7 +48,7 @@ struct ContentView: View {
         Text("\(blockerUpdateStatusMessage)")
           .font(.footnote)
           .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(.top)
+          .padding(.vertical)
 
         Button("Recharger la liste des numéros de téléphone") {
           reloadBlockerListExtension()
@@ -59,7 +59,7 @@ struct ContentView: View {
         .cornerRadius(8)
       }
 
-      Text("Liste des préfixes bloqués par l'application :")
+      Text("Liste des préfixes bloqués")
         .font(.headline)
         .padding(.top)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,7 +70,7 @@ struct ContentView: View {
       .font(.footnote)
       .frame(maxWidth: .infinity, alignment: .leading)
 
-      Text("Les numéros de téléphone présents dans vos contacts ne seront pas bloqués.")
+      Text("⚠ Les numéros de téléphone présents dans vos contacts ne seront pas bloqués.")
         .font(.footnote)
         .padding(.top)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -129,7 +129,7 @@ struct ContentView: View {
         formatter.timeStyle = .short
         let formattedDate = formatter.string(from: lastUpdate)
         self.blockerUpdateStatusMessage =
-          "\(blockedNumbers) numéros bloqués, mise à jour faite le \(formattedDate)"
+          "🎉 \(blockedNumbers) numéros bloqués, mise à jour faite le \(formattedDate)"
       } else {
         self.blockerUpdateStatusMessage = "\(blockedNumbers) numéros bloqués"
       }
