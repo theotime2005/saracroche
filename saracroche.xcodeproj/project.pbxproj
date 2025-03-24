@@ -179,11 +179,11 @@
 				};
 			};
 			buildConfigurationList = 853F84832D904A1B00279342 /* Build configuration list for PBXProject "saracroche" */;
-			developmentRegion = en;
+			developmentRegion = fr;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
+				fr,
 			);
 			mainGroup = 853F847F2D904A1B00279342;
 			minimizedProjectReferenceProxies = 1;
