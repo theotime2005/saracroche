@@ -138,8 +138,9 @@ struct ContentView: View {
         self.blockerUpdateStatusMessage =
           "Mise à jour en cours... démarrage de la mise à jour, garder l'application ouverte"
       } else {
+        let percentage = totalBlockedNumbers > 0 ? (blockedNumbers * 100) / totalBlockedNumbers : 0
         self.blockerUpdateStatusMessage =
-          "Mise à jour en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers) numéros, gardez l'application ouverte"
+          "Mise à jour en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers) numéros (\(percentage)%), gardez l'application ouverte"
       }
     } else {
       self.blockerUpdateStatusMessage = "Aucun numéro bloqué, rechargez la liste"
