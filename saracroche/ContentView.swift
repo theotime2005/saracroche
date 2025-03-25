@@ -10,8 +10,28 @@ struct ContentView: View {
   @State private var isBlockerEnabled: Bool = false
   @State private var blockerStatusMessage: String = "Vérification du statut..."
   @State private var blockerUpdateStatusMessage: String = ""
+  @State private var updateStatus: String = "finish"
   @State private var statusTimer: Timer? = nil
   @State private var updateTimer: Timer? = nil
+
+  // List of phone number ranges to block
+  @State private var phoneNumberRanges: [(start: Int64, end: Int64)] = [
+    (33_162_000_000, 33_162_999_999),
+    (33_163_000_000, 33_163_999_999),
+    (33_271_000_000, 33_271_999_999),
+    (33_377_000_000, 33_377_999_999),
+    (33_378_000_000, 33_378_999_999),
+    (33_424_000_000, 33_424_999_999),
+    (33_425_000_000, 33_425_999_999),
+    (33_568_000_000, 33_568_999_999),
+    (33_569_000_000, 33_569_999_999),
+    (33_948_000_000, 33_948_999_999),
+    (33_947_500_000, 33_947_599_999),
+    (33_947_600_000, 33_947_699_999),
+    (33_947_700_000, 33_947_799_999),
+    (33_947_800_000, 33_947_899_999),
+    (33_947_900_000, 33_947_999_999),
+  ]
 
   let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
 
@@ -88,8 +108,9 @@ struct ContentView: View {
   }
 
   private func checkBlockerStatus() {
+    if updateStatus == "start" { return }
     let manager = CXCallDirectoryManager.sharedInstance
-
+    
     manager.getEnabledStatusForExtension(withIdentifier: "com.cbouvat.saracroche.blocker") {
       status, error in
       DispatchQueue.main.async {
@@ -98,7 +119,7 @@ struct ContentView: View {
           self.blockerStatusMessage = "Erreur"
           return
         }
-
+        
         switch status {
         case .enabled:
           self.isBlockerEnabled = true
@@ -118,20 +139,16 @@ struct ContentView: View {
   }
 
   private func updateBlockerStatusMessage() {
-    let updateStatus = sharedUserDefaults?.string(forKey: "updateStatus") ?? ""
     let blockedNumbers = sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0
     let totalBlockedNumbers = sharedUserDefaults?.integer(forKey: "totalBlockedNumbers") ?? 0
+    let lastUpdate = sharedUserDefaults?.string(forKey: "lastUpdate") ?? ""
 
     if updateStatus == "finish" {
-      if let lastUpdate = sharedUserDefaults?.object(forKey: "lastUpdate") as? Date {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        let formattedDate = formatter.string(from: lastUpdate)
-        self.blockerUpdateStatusMessage =
-          "🎉 \(blockedNumbers) numéros bloqués, mise à jour faite le \(formattedDate)"
+      if lastUpdate == "" {
+        self.blockerUpdateStatusMessage = "Aucune mise à jour effectuée, recharger la liste"
       } else {
-        self.blockerUpdateStatusMessage = "\(blockedNumbers) numéros bloqués"
+        self.blockerUpdateStatusMessage =
+          "🎉 \(blockedNumbers) numéros bloqués, mise à jour faite le \(lastUpdate)"
       }
     } else if updateStatus == "start" {
       if blockedNumbers == 0 {
@@ -148,21 +165,68 @@ struct ContentView: View {
   }
 
   private func reloadBlockerListExtension() {
-    sharedUserDefaults?.set("start", forKey: "updateStatus")
+    updateStatus = "start"
+    let totalCount = countAllBlockedNumbers()
+    
+    sharedUserDefaults?.set(totalCount, forKey: "totalBlockedNumbers")
     sharedUserDefaults?.set(0, forKey: "blockedNumbers")
-
+    
+    var rangesToProcess = phoneNumberRanges
     let manager = CXCallDirectoryManager.sharedInstance
+    
+    func processNextRange() {
+      sharedUserDefaults?.set("addPrefix", forKey: "action")
+      if !rangesToProcess.isEmpty {
+        let range = rangesToProcess.removeFirst()
+        
+        sharedUserDefaults?.set(range.start, forKey: "prefixesStart")
+        sharedUserDefaults?.set(range.end, forKey: "prefixesEnd")
+        
+        manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
+          DispatchQueue.main.async {
+            if error != nil {
+              self.blockerStatusMessage = "Erreur lors du rechargement"
+            }
+            
+            processNextRange()
+          }
+        }
+      } else {
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        let formattedDate = formatter.string(from: date)
+        sharedUserDefaults?.set(formattedDate, forKey: "lastUpdate")
+        updateStatus = "finish"
+      }
+    }
+
+    sharedUserDefaults?.set("reset", forKey: "action")
     manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
       DispatchQueue.main.async {
         if error != nil {
           self.blockerStatusMessage = "Erreur lors du rechargement"
         }
+        
+        processNextRange()
       }
     }
   }
 
+  private func countAllBlockedNumbers() -> Int64 {
+    var totalCount: Int64 = 0
+
+    // Compter tous les numéros en utilisant le tableau
+    for range in phoneNumberRanges {
+      totalCount += (range.end - range.start + 1)
+    }
+
+    return totalCount
+  }
+
   private func startStatusTimer() {
-    statusTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
+    statusTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
       self.checkBlockerStatus()
     }
   }
@@ -173,7 +237,7 @@ struct ContentView: View {
   }
 
   private func startUpdateTimer() {
-    updateTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+    updateTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
       self.updateBlockerStatusMessage()
     }
   }
