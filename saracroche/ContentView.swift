@@ -89,11 +89,6 @@ struct ContentView: View {
       )
       .font(.footnote)
       .frame(maxWidth: .infinity, alignment: .leading)
-
-      Text("⚠ Les numéros de téléphone présents dans vos contacts ne seront pas bloqués.")
-        .font(.footnote)
-        .padding(.top)
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
     .padding()
     .onAppear {
