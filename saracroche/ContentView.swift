@@ -86,7 +86,7 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
       Text(
-        "0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, 09475 à 09479. Cette liste est basée sur les numéros du plan de numérotation français fournis par l'ARCEP."
+        "L'application bloque les préfixes suivants, communiqués par l'ARCEP : 0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, ainsi que ceux allant de 09475 à 09479. Ces préfixes sont réservés au démarchage téléphonique."
       )
       .font(.footnote)
       .frame(maxWidth: .infinity, alignment: .leading)
