@@ -10,10 +10,9 @@ struct ContentView: View {
   @State private var isBlockerEnabled: Bool = false
   @State private var blockerStatusMessage: String = "Vérification du statut..."
   @State private var blockerUpdateStatusMessage: String = ""
-  @State private var updateStatus: String = "finish"
+  @State private var blocklistVersion: String = "1"
   @State private var statusTimer: Timer? = nil
   @State private var updateTimer: Timer? = nil
-  @State private var blocklistVersion: String = "1"
 
   // List of phone number ranges to block
   @State private var blockPhoneNumberRanges: [(start: Int64, end: Int64)] = [
@@ -81,22 +80,59 @@ struct ContentView: View {
 
         let installedVersion = sharedUserDefaults?.string(forKey: "blocklistVersion") ?? ""
         let updateAvailable = installedVersion != blocklistVersion
+        let blockerStatus = sharedUserDefaults?.string(forKey: "blockerStatus") ?? ""
 
-        Button(updateAvailable ? "Bloquer la nouvelle liste" : "Bloquer à nouveau") {
-          reloadBlockerListExtension()
-        }
-        .padding()
-        .background(updateAvailable ? Color.red : Color.orange)
-        .foregroundColor(.white)
-        .cornerRadius(8)
+        if blockerStatus == "update" {
+          Button("Installation en cours...") {
+            // Do nothing, installation is in progress
+          }
+          .padding()
+          .background(Color.orange)
+          .foregroundColor(.white)
+          .cornerRadius(8)
+        } else if blockerStatus == "delete" {
+          Button("Suppression en cours...") {
+            // Do nothing, deletion is in progress
+          }
+          .padding()
+          .background(Color.red)
+          .foregroundColor(.white)
+          .cornerRadius(8)
+        } else if blockerStatus == "active" {
+          if updateAvailable {
+            Button("Mettre à jour la liste de blocage") {
+              reloadBlockerListExtension()
+            }
+            .padding()
+            .background(Color.red)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+          } else {
+            Button("Liste de blocage à jour") {
+              reloadBlockerListExtension()
+            }
+            .padding()
+            .background(Color.green)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+          }
 
-        Text("Supprimer la liste de blocage")
+          Text("Supprimer la liste de blocage")
           .foregroundColor(.blue)
           .underline()
           .padding()
           .onTapGesture {
             removeBlockerList()
           }
+        } else {
+          Button("Installer la liste de blocage") {
+            reloadBlockerListExtension()
+          }
+          .padding()
+          .background(Color.blue)
+          .foregroundColor(.white)
+          .cornerRadius(8)
+        }
       }
 
       Text("Liste des préfixes bloqués")
@@ -123,7 +159,8 @@ struct ContentView: View {
   }
 
   private func checkBlockerStatus() {
-    if updateStatus == "start" { return }
+    let blockerStatus = sharedUserDefaults?.string(forKey: "blockerStatus") ?? ""
+    if blockerStatus == "update" { return }
     let manager = CXCallDirectoryManager.sharedInstance
 
     manager.getEnabledStatusForExtension(withIdentifier: "com.cbouvat.saracroche.blocker") {
@@ -156,17 +193,11 @@ struct ContentView: View {
   private func updateBlockerStatusMessage() {
     let blockedNumbers = sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0
     let totalBlockedNumbers = sharedUserDefaults?.integer(forKey: "totalBlockedNumbers") ?? 0
-    let lastUpdate = sharedUserDefaults?.string(forKey: "lastUpdate") ?? ""
-    let version = sharedUserDefaults?.string(forKey: "blocklistVersion") ?? blocklistVersion
+    let blockerStatus = sharedUserDefaults?.string(forKey: "blockerStatus") ?? ""
 
-    if updateStatus == "finish" {
-      if lastUpdate == "" {
-        self.blockerUpdateStatusMessage = "Aucune mise à jour effectuée, recharger la liste"
-      } else {
-        self.blockerUpdateStatusMessage =
-          "🎉 \(blockedNumbers) numéros bloqués"
-      }
-    } else if updateStatus == "start" {
+    if blockerStatus == "active" {
+      self.blockerUpdateStatusMessage = "🎉 \(blockedNumbers) numéros bloqués"
+    } else if blockerStatus == "update" {
       if blockedNumbers == 0 {
         self.blockerUpdateStatusMessage =
           "Installation de la liste de blocage en cours... Garder l'application ouverte"
@@ -175,18 +206,20 @@ struct ContentView: View {
         self.blockerUpdateStatusMessage =
           "Installation de la liste de blocage en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers) numéros (\(percentage)%). Gardez l'application ouverte"
       }
+    } else if blockerStatus == "delete" {
+      self.blockerUpdateStatusMessage = "Suppression de la liste de blocage en cours..."
     } else {
-      self.blockerUpdateStatusMessage = "Aucun numéro bloqué"
+      self.blockerUpdateStatusMessage = "Aucun numéro bloqué, installer la liste de blocage"
     }
   }
 
   private func reloadBlockerListExtension() {
-    updateStatus = "start"
     let totalCount = countAllBlockedNumbers()
 
+    sharedUserDefaults?.set("update", forKey: "blockerStatus")
     sharedUserDefaults?.set(totalCount, forKey: "totalBlockedNumbers")
     sharedUserDefaults?.set(0, forKey: "blockedNumbers")
-    sharedUserDefaults?.set(blocklistVersion, forKey: "blocklistVersion")
+    sharedUserDefaults?.set(self.blocklistVersion, forKey: "blocklistVersion")
 
     var rangesToProcess = blockPhoneNumberRanges
     let manager = CXCallDirectoryManager.sharedInstance
@@ -209,13 +242,7 @@ struct ContentView: View {
           }
         }
       } else {
-        let date = Date()
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        let formattedDate = formatter.string(from: date)
-        sharedUserDefaults?.set(formattedDate, forKey: "lastUpdate")
-        updateStatus = "finish"
+        sharedUserDefaults?.set("active", forKey: "blockerStatus")
       }
     }
 
@@ -227,6 +254,26 @@ struct ContentView: View {
         }
 
         processNextRange()
+      }
+    }
+  }
+
+  private func removeBlockerList() {
+    sharedUserDefaults?.set("delete", forKey: "blockerStatus")
+    sharedUserDefaults?.set(0, forKey: "totalBlockedNumbers")
+    sharedUserDefaults?.set(0, forKey: "blockedNumbers")
+    sharedUserDefaults?.set("", forKey: "blocklistVersion")
+
+    let manager = CXCallDirectoryManager.sharedInstance
+
+    sharedUserDefaults?.set("reset", forKey: "action")
+    manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
+      DispatchQueue.main.async {
+        if error != nil {
+          self.blockerStatusMessage = "Erreur lors de la suppression"
+        } else {
+          sharedUserDefaults?.set("", forKey: "blockerStatus")
+        }
       }
     }
   }
@@ -271,26 +318,6 @@ struct ContentView: View {
         print("Erreur lors de l'ouverture des réglages: \(error.localizedDescription)")
       }
     })
-  }
-
-  private func removeBlockerList() {
-    updateStatus = "start"
-
-    sharedUserDefaults?.set(0, forKey: "totalBlockedNumbers")
-    sharedUserDefaults?.set(0, forKey: "blockedNumbers")
-
-    let manager = CXCallDirectoryManager.sharedInstance
-
-    sharedUserDefaults?.set("reset", forKey: "action")
-    manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
-      DispatchQueue.main.async {
-        if error != nil {
-          self.blockerStatusMessage = "Erreur lors de la suppression"
-        } else {
-          updateStatus = "finish"
-        }
-      }
-    }
   }
 }
 
