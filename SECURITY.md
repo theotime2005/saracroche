@@ -10,4 +10,4 @@ We release patches for security vulnerabilities in the following versions:
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please report it to us by emailing mail [at] cbouvat.com. We will respond as quickly as possible to address the issue.
+If you discover a security vulnerability, please report it to us by emailing mail@cbouvat.com. We will respond as quickly as possible to address the issue.
