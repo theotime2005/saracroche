@@ -10,6 +10,22 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
   let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
 
+  // Convert a pattern like "33162XXXXXX" to a range (33162000000, 33162999999)
+  private func patternToRange(_ pattern: String) -> (start: Int64, end: Int64)? {
+    guard pattern.contains("X") else { return nil }
+
+    let digits = pattern.filter { $0 != "X" }
+    let xCount = pattern.filter { $0 == "X" }.count
+
+    guard let base = Int64(digits) else { return nil }
+
+    let multiplier = Int64(pow(10, Double(xCount)))
+    let start = base * multiplier
+    let end = start + multiplier - 1
+
+    return (start, end)
+  }
+
   override func beginRequest(with context: CXCallDirectoryExtensionContext) {
     context.delegate = self
 
@@ -24,16 +40,19 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
       if action == "addPrefix" {
         var blockedNumbers = Int64(sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0)
-        let start = Int64(sharedUserDefaults?.integer(forKey: "prefixesStart") ?? 0)
-        let end = Int64(sharedUserDefaults?.integer(forKey: "prefixesEnd") ?? 0)
-        
-        if start != 0 && end != 0 {
-          print("Blocking numbers from \(start) to \(end)")
+
+        if let pattern = sharedUserDefaults?.string(forKey: "phonePattern"),
+          let range = patternToRange(pattern)
+        {
+          let start = range.start
+          let end = range.end
+
+          print("Blocking numbers from \(start) to \(end) (pattern: \(pattern))")
           for number in start...end {
             context.addBlockingEntry(withNextSequentialPhoneNumber: number)
-            
+
             blockedNumbers += 1
-            
+
             if blockedNumbers % 1000 == 0 {
               sharedUserDefaults?.set(blockedNumbers, forKey: "blockedNumbers")
             }

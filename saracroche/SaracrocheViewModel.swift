@@ -16,31 +16,31 @@ class SaracrocheViewModel: ObservableObject {
   private var statusTimer: Timer? = nil
   private var updateTimer: Timer? = nil
 
-  // List of phone number ranges to block
-  let blockPhoneNumberRanges: [(start: Int64, end: Int64)] = [
-    (33_162_000_000, 33_162_999_999),
-    (33_163_000_000, 33_163_999_999),
-    (33_270_000_000, 33_270_999_999),
-    (33_271_000_000, 33_271_999_999),
-    (33_377_000_000, 33_377_999_999),
-    (33_378_000_000, 33_378_999_999),
-    (33_424_000_000, 33_424_999_999),
-    (33_425_000_000, 33_425_999_999),
-    (33_568_000_000, 33_568_999_999),
-    (33_569_000_000, 33_569_999_999),
-    (33_948_000_000, 33_948_999_999),
-    (33_947_500_000, 33_947_599_999),
-    (33_947_600_000, 33_947_699_999),
-    (33_947_700_000, 33_947_799_999),
-    (33_947_800_000, 33_947_899_999),
-    (33_947_900_000, 33_947_999_999),
+  // List of phone number patterns to block
+  let blockPhoneNumberPatterns: [String] = [
+    "33162XXXXXX",
+    "33163XXXXXX",
+    "33270XXXXXX",
+    "33271XXXXXX",
+    "33377XXXXXX",
+    "33378XXXXXX",
+    "33424XXXXXX",
+    "33425XXXXXX",
+    "33568XXXXXX",
+    "33569XXXXXX",
+    "33948XXXXXX",
+    "339475XXXXX",
+    "339476XXXXX",
+    "339477XXXXX",
+    "339478XXXXX",
+    "339479XXXXX",
   ]
 
-  // List of phone number ranges to inform the user about (not blocked)
-  let informPhoneNumberRanges: [(start: Int64, end: Int64)] = [
-    (33_937_000_000, 33_937_999_999),
-    (33_938_000_000, 33_938_999_999),
-    (33_939_000_000, 33_939_999_999),
+  // List of phone number patterns to inform the user about (not blocked)
+  let informPhoneNumberPatterns: [String] = [
+    "33937XXXXXX",
+    "33938XXXXXX",
+    "33939XXXXXX",
   ]
 
   let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
@@ -119,16 +119,15 @@ class SaracrocheViewModel: ObservableObject {
     sharedUserDefaults?.set(0, forKey: "blockedNumbers")
     sharedUserDefaults?.set(self.blocklistVersion, forKey: "blocklistVersion")
 
-    var rangesToProcess = blockPhoneNumberRanges
+    var patternsToProcess = blockPhoneNumberPatterns
     let manager = CXCallDirectoryManager.sharedInstance
 
-    func processNextRange() {
+    func processNextPattern() {
       sharedUserDefaults?.set("addPrefix", forKey: "action")
-      if !rangesToProcess.isEmpty {
-        let range = rangesToProcess.removeFirst()
+      if !patternsToProcess.isEmpty {
+        let pattern = patternsToProcess.removeFirst()
 
-        sharedUserDefaults?.set(range.start, forKey: "prefixesStart")
-        sharedUserDefaults?.set(range.end, forKey: "prefixesEnd")
+        sharedUserDefaults?.set(pattern, forKey: "phonePattern")
 
         manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
           DispatchQueue.main.async {
@@ -136,7 +135,7 @@ class SaracrocheViewModel: ObservableObject {
               self.blockerStatusMessage = "Erreur lors du rechargement"
             }
 
-            processNextRange()
+            processNextPattern()
           }
         }
       } else {
@@ -151,7 +150,7 @@ class SaracrocheViewModel: ObservableObject {
           self.blockerStatusMessage = "Erreur lors du rechargement"
         }
 
-        processNextRange()
+        processNextPattern()
       }
     }
   }
@@ -188,9 +187,10 @@ class SaracrocheViewModel: ObservableObject {
   private func countAllBlockedNumbers() -> Int64 {
     var totalCount: Int64 = 0
 
-    // Compter tous les numéros en utilisant le tableau
-    for range in blockPhoneNumberRanges {
-      totalCount += (range.end - range.start + 1)
+    // Count all numbers using the patterns
+    for pattern in blockPhoneNumberPatterns {
+      let xCount = pattern.filter { $0 == "X" }.count
+      totalCount += Int64(pow(10, Double(xCount)))
     }
 
     return totalCount
