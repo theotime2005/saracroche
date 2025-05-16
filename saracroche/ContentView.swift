@@ -290,7 +290,7 @@ struct ContentView: View {
   }
 
   private func startStatusTimer() {
-    statusTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+    statusTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { _ in
       self.checkBlockerStatus()
     }
   }
