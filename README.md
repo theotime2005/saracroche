@@ -1,16 +1,30 @@
 # Saracroche
 
-## Description
+## 🇫🇷 Description
 
-Saracroche is an iOS app that protects you from unwanted spam calls by blocking phone calls from numbers on the ARCEP (French Regulatory Authority for Electronic Communications) spam list. It's designed to be simple, effective, and privacy-focused.
+Saracroche est une application iOS qui vous protège des appels indésirables en bloquant les appels téléphoniques provenant des numéros figurant sur la liste des numéros dédié au démarchage de l'ARCEP (Autorité de Régulation des Communications Électroniques en France). Elle est conçue pour être simple, efficace et respectueuse de la vie privée.
 
-## Features
+## 🇫🇷 Fonctionnalités
 
-- 🛡️ Automatically blocks known spam numbers
-- 📱 Native iOS Call Directory Extension
-- 🔒 Privacy-focused: no calls data is collected
-- 🔄 Regular updates of the spam number database
+- 🛡️ Bloque automatiquement les numéros
+- 📱 Extension native iOS
+- 🔒 Respect de la vie privée : aucune donnée d'appel n'est collectée
+- 🔄 Mises à jour régulières de la base de données des numéros
+- 🇫🇷 Basé sur les données officielles de l'ARCEP
+
+## 🇬🇧 Description
+
+Saracroche is an iOS app that protects you from unwanted calls by blocking phone calls from numbers on the ARCEP (French Regulatory Authority for Electronic Communications) spam list. It is designed to be simple, effective, and privacy-respectful.
+
+## 🇬🇧 Features
+
+- 🛡️ Automatically blocks numbers
+- 📱 Native iOS extension
+- 🔒 Privacy-respectful: no call data is collected
+- 🔄 Regular updates of the number database
 - 🇫🇷 Based on official ARCEP data
+
+---
 
 ## Installation
 
