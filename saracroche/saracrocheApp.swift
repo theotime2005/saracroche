@@ -1,8 +1,3 @@
-//
-//  saracrocheApp.swift
-//  saracroche
-//
-
 import SwiftUI
 
 @main
