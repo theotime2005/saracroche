@@ -1,8 +1,3 @@
-//
-//  SaracrocheViewModel.swift
-//  saracroche
-//
-
 import CallKit
 import Combine
 import SwiftUI
@@ -98,16 +93,16 @@ class SaracrocheViewModel: ObservableObject {
     } else if blockerStatus == "update" {
       if blockedNumbers == 0 {
         self.blockerUpdateStatusMessage =
-          "Installation de la liste de blocage en cours... Garder l'application ouverte"
+          "🚧 Installation de la liste de blocage en cours..."
       } else {
         let percentage = totalBlockedNumbers > 0 ? (blockedNumbers * 100) / totalBlockedNumbers : 0
         self.blockerUpdateStatusMessage =
-          "Installation de la liste de blocage en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers) numéros (\(percentage)%). Gardez l'application ouverte"
+          "🚧 Installation de la liste de blocage en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers) numéros (\(percentage)%)."
       }
     } else if blockerStatus == "delete" {
-      self.blockerUpdateStatusMessage = "Suppression de la liste de blocage en cours..."
+      self.blockerUpdateStatusMessage = "🗑️ Suppression de la liste de blocage en cours..."
     } else {
-      self.blockerUpdateStatusMessage = "Aucun numéro bloqué, installer la liste de blocage"
+      self.blockerUpdateStatusMessage = "☹️ Aucun numéro bloqué, installer la liste de blocage"
     }
   }
 
@@ -197,7 +192,7 @@ class SaracrocheViewModel: ObservableObject {
   }
 
   private func startStatusTimer() {
-    statusTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
+    statusTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
       self?.checkBlockerStatus()
     }
   }
@@ -208,7 +203,7 @@ class SaracrocheViewModel: ObservableObject {
   }
 
   private func startUpdateTimer() {
-    updateTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+    updateTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
       self?.updateBlockerStatusMessage()
     }
   }
