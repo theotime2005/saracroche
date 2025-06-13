@@ -10,7 +10,6 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
   let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
 
-  // Convert a pattern like "33162XXXXXX" to a range (33162000000, 33162999999)
   private func patternToRange(_ pattern: String) -> (start: Int64, end: Int64)? {
     guard pattern.contains("X") else { return nil }
 
