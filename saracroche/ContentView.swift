@@ -22,6 +22,7 @@ struct ContentView: View {
           Text("Statut du bloqueur d'appels et SMS")
             .font(.title3)
             .fontWeight(.semibold)
+            .multilineTextAlignment(.center)
 
           HStack {
             Image(
@@ -49,6 +50,8 @@ struct ContentView: View {
               .font(.title3)
               .fontWeight(.semibold)
               .padding(.bottom)
+              .multilineTextAlignment(.center)
+              .frame(maxWidth: .infinity, alignment: .center)
 
             Text(
               "Pour activer le bloqueur d'appels, cliquez sur le bouton ci-dessous et suivez les instructions pour l'activer dans les réglages de votre iPhone. Une fois l'activation effectuée, il sera possible d'installer la liste de blocage afin de filtrer les appels indésirables."
@@ -73,12 +76,12 @@ struct ContentView: View {
 
             Text("\(viewModel.blockerUpdateStatusMessage)")
               .font(.footnote)
+              .multilineTextAlignment(.center)
               .padding(.bottom)
 
             if viewModel.blockerStatus == "update" {
               Text("⚠️ Gardez l'application ouverte.")
                 .bold()
-                
             } else if viewModel.blockerStatus == "delete" {
               Text("⚠️ Gardez l'application ouverte.")
                 .bold()
@@ -105,22 +108,35 @@ struct ContentView: View {
                 .cornerRadius(8)
               }
               Button("Supprimer la liste de blocage") {
-                viewModel.removeBlockerList()
+                showDeleteConfirmation = true
               }
               .padding()
               .frame(maxWidth: .infinity)
               .background(Color.red)
               .foregroundColor(.white)
               .cornerRadius(8)
-            } else {
-                Button("Installer la liste de blocage") {
-                viewModel.reloadBlockerListExtension()
+              .confirmationDialog(
+                "Supprimer la liste de blocage",
+                isPresented: $showDeleteConfirmation,
+                titleVisibility: .visible
+              ) {
+                Button("Supprimer", role: .destructive) {
+                  viewModel.removeBlockerList()
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
+              } message: {
+                Text(
+                  "Êtes-vous sûr de vouloir supprimer la liste de blocage ? Cette action est irréversible."
+                )
+              }
+            } else {
+              Button("Installer la liste de blocage") {
+                viewModel.reloadBlockerListExtension()
+              }
+              .padding()
+              .frame(maxWidth: .infinity)
+              .background(Color.blue)
+              .foregroundColor(.white)
+              .cornerRadius(8)
             }
           }
         }
@@ -179,22 +195,22 @@ struct ContentView: View {
             .font(.footnote)
           }
           .padding(.bottom)
-          
+
           Group {
             Text("🐛 Signaler un bug")
               .font(.headline)
-            
+
             Text(
               "Si vous rencontrez un bug ou un problème avec l'application, merci de le signaler sur [GitHub](https://github.com/cbouvat/saracroche/issues) ou par email à l'adresse suivante : saracroche@cbouvat.com"
             )
             .font(.footnote)
           }
           .padding(.bottom)
-          
+
           Group {
             Text("🔗 Liens utiles")
               .font(.headline)
-            
+
             Text(
               "Code source de l'application : [GitHub](https://github.com/cbouvat/saracroche)\nLe site officiel de l'application : [cbouvat.com/saracroche](https://cbouvat.com/saracroche)\nSuivez-moi sur Mastodon : [@cbouvat](https://mastodon.social/@cbouvat)\n\nBisous 😘"
             )
