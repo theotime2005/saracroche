@@ -205,8 +205,12 @@ struct ContentView: View {
         ScrollView {
           VStack(alignment: .leading) {
             Group {
-              Text("🛟 Améliorez le blocage")
-                .font(.headline)
+              HStack {
+                Image(systemName: "exclamationmark.shield")
+                  .foregroundColor(.blue)
+                Text("Améliorez le blocage")
+                  .font(.headline)
+              }
               Text(
                 "Dans le but d'améliorer le blocage des appels et SMS indésirables, vous pouvez signaler les numéros qui ne sont pas bloqués par l'application. Cela aidera à enrichir la liste de blocage et à rendre l'application plus efficace. Pour cela envoyez un email à l'adresse suivante : saracroche@cbouvat.com"
               )
@@ -215,8 +219,12 @@ struct ContentView: View {
             .padding(.bottom)
 
             Group {
-              Text("❓Information sur les numéros bloqués")
-                .font(.headline)
+              HStack {
+                Image(systemName: "questionmark.circle")
+                  .foregroundColor(.blue)
+                Text("Information sur les numéros bloqués")
+                  .font(.headline)
+              }
 
               Text(
                 "L'application bloque les préfixes suivants, communiqués par l'ARCEP : 0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, ainsi que ceux allant de 09475 à 09479. Ces préfixes sont réservés au démarchage téléphonique."
@@ -226,8 +234,12 @@ struct ContentView: View {
             .padding(.bottom)
 
             Group {
-              Text("🎁 Aidez au développement")
-                .font(.headline)
+              HStack {
+                Image(systemName: "gift")
+                  .foregroundColor(.blue)
+                Text("Aidez au développement")
+                  .font(.headline)
+              }
 
               Text(
                 "L'application Saracroche est open source et développée bénévolement. Si vous souhaitez soutenir le projet, vous pouvez faire un don via [GitHub Sponsors](https://github.com/sponsors/cbouvat). Votre aide est précieuse pour maintenir et améliorer l'application."
@@ -237,23 +249,36 @@ struct ContentView: View {
             .padding(.bottom)
 
             Group {
-              Text("⭐️ Notez l'application sur l'App Store")
-                .font(.headline)
+              HStack {
+                Image(systemName: "star")
+                  .foregroundColor(.yellow)
+                Text("Notez l'application sur l'App Store")
+                  .font(.headline)
+              }
 
               Text(
                 "Si vous appréciez l'application Saracroche, n'hésitez pas à lui laisser une note sur l'App Store. Votre soutien nous aide à atteindre plus d'utilisateurs et à améliorer continuellement l'application."
               )
               .font(.footnote)
-              Button("Noter l'application") {
+              Button {
                 requestReview()
+              } label: {
+                HStack {
+                  Image(systemName: "star.fill")
+                  Text("Noter l'application")
+                }
               }
               .font(.footnote)
             }
             .padding(.bottom)
 
             Group {
-              Text("🐛 Signaler un bug")
-                .font(.headline)
+              HStack {
+                Image(systemName: "ladybug")
+                  .foregroundColor(.red)
+                Text("Signaler un bug")
+                  .font(.headline)
+              }
 
               Text(
                 "Si vous rencontrez un bug ou un problème avec l'application, merci de le signaler sur [GitHub](https://github.com/cbouvat/saracroche/issues) ou par email à l'adresse suivante : saracroche@cbouvat.com"
@@ -263,8 +288,12 @@ struct ContentView: View {
             .padding(.bottom)
 
             Group {
-              Text("🔗 Liens utiles")
-                .font(.headline)
+              HStack {
+                Image(systemName: "link")
+                  .foregroundColor(.blue)
+                Text("Liens utiles")
+                  .font(.headline)
+              }
 
               Text(
                 "Code source de l'application : [GitHub](https://github.com/cbouvat/saracroche)\nLe site officiel de l'application : [cbouvat.com/saracroche](https://cbouvat.com/saracroche)\nSuivez-moi sur Mastodon : [@cbouvat](https://mastodon.social/@cbouvat)\n\nBisous 😘"
