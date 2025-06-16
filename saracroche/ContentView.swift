@@ -1,8 +1,3 @@
-//
-//  ContentView.swift
-//  saracroche
-//
-
 import SwiftUI
 import StoreKit
 
