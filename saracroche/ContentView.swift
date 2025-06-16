@@ -4,10 +4,12 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct ContentView: View {
   @StateObject private var viewModel = SaracrocheViewModel()
   @State private var showDeleteConfirmation = false
+  @Environment(\.requestReview) var requestReview
 
   var body: some View {
     ScrollView {
@@ -192,6 +194,10 @@ struct ContentView: View {
             Text(
               "Si vous appréciez l'application Saracroche, n'hésitez pas à lui laisser une note sur l'App Store. Votre soutien nous aide à atteindre plus d'utilisateurs et à améliorer continuellement l'application."
             )
+            .font(.footnote)
+            Button("Noter l'application") {
+              requestReview()
+            }
             .font(.footnote)
           }
           .padding(.bottom)
