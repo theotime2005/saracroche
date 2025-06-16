@@ -71,6 +71,13 @@ struct ContentView: View {
             .background(Color.blue)
             .foregroundColor(.white)
             .cornerRadius(8)
+            .overlay(
+              HStack {
+                Image(systemName: "shield.fill")
+                  .padding(.leading)
+                Spacer()
+              }
+            )
           } else {
             Text("Statut de la liste de blocage")
               .font(.title3)
@@ -90,8 +97,13 @@ struct ContentView: View {
                 .bold()
             } else if viewModel.blockerStatus == "active" {
               if viewModel.isUpdateAvailable {
-                Button("Mettre à jour la liste de blocage") {
+                Button {
                   viewModel.reloadBlockerListExtension()
+                } label: {
+                  HStack {
+                    Image(systemName: "arrow.clockwise")
+                    Text("Mettre à jour la liste de blocage")
+                  }
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -101,8 +113,13 @@ struct ContentView: View {
               } else {
                 Text("La liste de blocage est à jour !")
                   .bold()
-                Button("Recharger la liste de blocage") {
+                Button {
                   viewModel.reloadBlockerListExtension()
+                } label: {
+                  HStack {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                    Text("Recharger la liste de blocage")
+                  }
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -110,8 +127,13 @@ struct ContentView: View {
                 .foregroundColor(.white)
                 .cornerRadius(8)
               }
-              Button("Supprimer la liste de blocage") {
+              Button {
                 showDeleteConfirmation = true
+              } label: {
+                HStack {
+                  Image(systemName: "trash")
+                  Text("Supprimer la liste de blocage")
+                }
               }
               .padding()
               .frame(maxWidth: .infinity)
@@ -132,8 +154,13 @@ struct ContentView: View {
                 )
               }
             } else {
-              Button("Installer la liste de blocage") {
+              Button {
                 viewModel.reloadBlockerListExtension()
+              } label: {
+                HStack {
+                  Image(systemName: "square.and.arrow.down")
+                  Text("Installer la liste de blocage")
+                }
               }
               .padding()
               .frame(maxWidth: .infinity)
@@ -155,12 +182,19 @@ struct ContentView: View {
         )
         .padding(.top)
 
-        Button("Informations & Ressources") {
+        Button {
           showInfoSheet = true
+        } label: {
+          HStack {
+            Image(systemName: "info.circle")
+            Text("A propos de Saracroche")
+          }
         }
         .padding()
+        .bold()
         .frame(maxWidth: .infinity)
-        .foregroundColor(.white)
+        .background(Color("AccentColor"))
+        .foregroundColor(.black)
         .cornerRadius(8)
         .padding(.top)
       }
