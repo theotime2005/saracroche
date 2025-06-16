@@ -127,7 +127,7 @@ struct ContentView: View {
                 }
               } message: {
                 Text(
-                  "Êtes-vous sûr de vouloir supprimer la liste de blocage ? Cette action est irréversible."
+                  "Êtes-vous sûr de vouloir supprimer la liste de blocage ?"
                 )
               }
             } else {
