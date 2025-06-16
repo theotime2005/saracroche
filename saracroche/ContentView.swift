@@ -52,7 +52,7 @@ struct ContentView: View {
               .frame(maxWidth: .infinity, alignment: .center)
 
             Text(
-              "Pour activer le bloqueur d'appels, cliquez sur le bouton ci-dessous et suivez les instructions pour l'activer dans les réglages de votre iPhone. Une fois l'activation effectuée, il sera possible d'installer la liste de blocage afin de filtrer les appels indésirables."
+              "Pour activer le bloqueur d'appels, il suffit d'utiliser le bouton ci-dessous et de suivre les instructions pour l'activer dans les réglages de votre iPhone. Une fois l'activation effectuée, il sera possible d'installer la liste de blocage afin de filtrer les appels indésirables."
             )
             .font(.footnote)
             .padding(.bottom)
@@ -182,7 +182,7 @@ struct ContentView: View {
         } label: {
           HStack {
             Image(systemName: "info.circle")
-            Text("A propos de Saracroche")
+            Text("À propos de Saracroche")
           }
         }
         .padding()
@@ -207,7 +207,7 @@ struct ContentView: View {
                   .font(.headline)
               }
               Text(
-                "Dans le but d'améliorer le blocage des appels et SMS indésirables, vous pouvez signaler les numéros qui ne sont pas bloqués par l'application. Cela aidera à enrichir la liste de blocage et à rendre l'application plus efficace. Pour cela envoyez un email à l'adresse suivante : saracroche@cbouvat.com"
+                "Dans le but d'améliorer le blocage des appels et SMS indésirables, il est possible de signaler les numéros qui ne sont pas bloqués par l'application. Cela contribuera à enrichir la liste de blocage et à rendre l'application plus efficace. Pour cela, il suffit d'envoyer un email à l'adresse suivante : saracroche@cbouvat.com"
               )
               .font(.footnote)
             }
@@ -237,7 +237,7 @@ struct ContentView: View {
               }
 
               Text(
-                "L'application Saracroche est open source et développée bénévolement. Si vous souhaitez soutenir le projet, vous pouvez faire un don via [GitHub Sponsors](https://github.com/sponsors/cbouvat). Votre aide est précieuse pour maintenir et améliorer l'application."
+                "L'application Saracroche est open source et développée bénévolement. Un soutien au projet est possible via [GitHub Sponsors](https://github.com/sponsors/cbouvat). Cette aide est précieuse pour maintenir et améliorer l'application."
               )
               .font(.footnote)
             }
@@ -252,7 +252,7 @@ struct ContentView: View {
               }
 
               Text(
-                "Si vous appréciez l'application Saracroche, n'hésitez pas à lui laisser une note sur l'App Store. Votre soutien nous aide à atteindre plus d'utilisateurs et à améliorer continuellement l'application."
+                "Si l'application Saracroche vous est utile, une évaluation sur l'App Store serait appréciée. Ce soutien aide à atteindre davantage de personnes utilisatrices et à améliorer continuellement l'application."
               )
               .font(.footnote)
               Button {
@@ -276,7 +276,7 @@ struct ContentView: View {
               }
 
               Text(
-                "Si vous rencontrez un bug ou un problème avec l'application, merci de le signaler sur [GitHub](https://github.com/cbouvat/saracroche/issues) ou par email à l'adresse suivante : saracroche@cbouvat.com"
+                "En cas de bug ou de problème avec l'application, merci de le signaler sur [GitHub](https://github.com/cbouvat/saracroche/issues) ou par email à l'adresse suivante : saracroche@cbouvat.com"
               )
               .font(.footnote)
             }
