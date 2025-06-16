@@ -55,6 +55,7 @@ struct ContentView: View {
             )
             .font(.footnote)
             .padding(.bottom)
+            .frame(maxWidth: .infinity, alignment: .center)
 
             Button("Activer dans les réglages") {
               viewModel.openSettings()
