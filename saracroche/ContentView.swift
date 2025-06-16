@@ -7,6 +7,7 @@ import SwiftUI
 
 struct ContentView: View {
   @StateObject private var viewModel = SaracrocheViewModel()
+  @State private var showDeleteConfirmation = false
 
   var body: some View {
     ScrollView {
@@ -50,7 +51,7 @@ struct ContentView: View {
               .padding(.bottom)
 
             Text(
-              "Pour activer le bloqueur d'appels, cliquez sur le bouton ci-dessous et suivez les instructions pour l'activer dans les réglages de votre iPhone. Une fois activé, vous pourrez installer la liste de blocage pour filtrer les appels indésirables."
+              "Pour activer le bloqueur d'appels, cliquez sur le bouton ci-dessous et suivez les instructions pour l'activer dans les réglages de votre iPhone. Une fois l'activation effectuée, il sera possible d'installer la liste de blocage afin de filtrer les appels indésirables."
             )
             .font(.footnote)
             .padding(.bottom)
@@ -74,11 +75,11 @@ struct ContentView: View {
               .padding(.bottom)
 
             if viewModel.blockerStatus == "update" {
-              Text("⚠️ Gardez l'application ouverte pendant l'installation de la liste de blocage.")
+              Text("⚠️ Gardez l'application ouverte.")
                 .bold()
                 
             } else if viewModel.blockerStatus == "delete" {
-              Text("⚠️ Gardez l'application ouverte pendant l'installation de la liste de blocage.")
+              Text("⚠️ Gardez l'application ouverte.")
                 .bold()
             } else if viewModel.blockerStatus == "active" {
               if viewModel.isUpdateAvailable {
@@ -126,7 +127,7 @@ struct ContentView: View {
         .frame(maxWidth: .infinity)
         .background(
           RoundedRectangle(cornerRadius: 16)
-            .fill(Color.white)
+            .fill(Color.white.opacity(0.2))
         )
         .overlay(
           RoundedRectangle(cornerRadius: 16)
@@ -194,17 +195,12 @@ struct ContentView: View {
               .font(.headline)
             
             Text(
-              "- Code source de l'application : [GitHub](https://github.com/cbouvat/saracroche)\n - Le site officiel de l'application : [cbouvat.com/saracroche](https://cbouvat.com/saracroche)\n - Suivez-moi sur Mastodon : [@cbouvat](https://mastodon.social/@cbouvat)\n\nBisous 😘"
+              "Code source de l'application : [GitHub](https://github.com/cbouvat/saracroche)\nLe site officiel de l'application : [cbouvat.com/saracroche](https://cbouvat.com/saracroche)\nSuivez-moi sur Mastodon : [@cbouvat](https://mastodon.social/@cbouvat)\n\nBisous 😘"
             )
             .font(.footnote)
           }
           .padding(.bottom)
         }
-        .padding()
-        .background(
-          RoundedRectangle(cornerRadius: 8)
-            .fill(Color(.secondarySystemBackground))
-        )
         .padding(.top)
       }
       .padding()
