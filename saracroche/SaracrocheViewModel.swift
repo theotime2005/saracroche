@@ -71,7 +71,7 @@ class SaracrocheViewModel: ObservableObject {
           self.blockerStatusMessage = "Le bloqueur d'appels est actif"
         case .disabled:
           self.isBlockerEnabled = false
-          self.blockerStatusMessage = "Le bloqueur d'appels est désactivé"
+          self.blockerStatusMessage = "Le bloqueur d'appels n'est pas activé"
         case .unknown:
           self.isBlockerEnabled = false
           self.blockerStatusMessage = "Statut inconnu"
@@ -89,20 +89,20 @@ class SaracrocheViewModel: ObservableObject {
     let blockerStatus = sharedUserDefaults?.string(forKey: "blockerStatus") ?? ""
 
     if blockerStatus == "active" {
-      self.blockerUpdateStatusMessage = "🎉 \(blockedNumbers) numéros bloqués"
+      self.blockerUpdateStatusMessage = "\(blockedNumbers) numéros bloqués"
     } else if blockerStatus == "update" {
       if blockedNumbers == 0 {
         self.blockerUpdateStatusMessage =
-          "🚧 Installation de la liste de blocage en cours..."
+          "Installation de la liste de blocage en cours"
       } else {
         let percentage = totalBlockedNumbers > 0 ? (blockedNumbers * 100) / totalBlockedNumbers : 0
         self.blockerUpdateStatusMessage =
-          "🚧 Installation de la liste de blocage en cours... \(blockedNumbers) numéros bloqués sur \(totalBlockedNumbers) numéros (\(percentage)%)."
+          "Installation de la liste de blocage en cours\n\n\(blockedNumbers) sur \(totalBlockedNumbers) numéros soit \(percentage)%"
       }
     } else if blockerStatus == "delete" {
-      self.blockerUpdateStatusMessage = "🗑️ Suppression de la liste de blocage en cours..."
+      self.blockerUpdateStatusMessage = "Suppression de la liste de blocage en cours"
     } else {
-      self.blockerUpdateStatusMessage = "☹️ Aucun numéro bloqué, installer la liste de blocage"
+      self.blockerUpdateStatusMessage = "Aucun numéro bloqué, installer la liste de blocage"
     }
   }
 

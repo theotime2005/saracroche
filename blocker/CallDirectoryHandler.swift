@@ -10,7 +10,30 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
   let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
 
-  private func patternToRange(_ pattern: String) -> (start: Int64, end: Int64)? {
+  override func beginRequest(with context: CXCallDirectoryExtensionContext) {
+    context.delegate = self
+
+    if context.isIncremental {
+      print("Incremental update requested")
+
+      let action = sharedUserDefaults?.string(forKey: "action")
+
+      switch action {
+      case "reset":
+        handleReset(to: context)
+      case "addPrefix":
+        handleAddPrefix(to: context)
+      default:
+        break
+      }
+    } else {
+      print("Full reload requested")
+    }
+
+    context.completeRequest()
+  }
+
+  private func patternToRange(pattern: String) -> (start: Int64, end: Int64)? {
     guard pattern.contains("X") else { return nil }
 
     let digits = pattern.filter { $0 != "X" }
@@ -25,42 +48,33 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
     return (start, end)
   }
 
-  override func beginRequest(with context: CXCallDirectoryExtensionContext) {
-    context.delegate = self
+  private func handleReset(to context: CXCallDirectoryExtensionContext) {
+    print("Resetting all entries")
+    context.removeAllBlockingEntries()
+    context.removeAllIdentificationEntries()
+  }
 
-    if context.isIncremental {
-      let action = sharedUserDefaults?.string(forKey: "action")
+  private func handleAddPrefix(to context: CXCallDirectoryExtensionContext) {
+    print("Adding prefix entries")
+    var blockedNumbers = Int64(sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0)
 
-      if action == "reset" {
-        print("Resetting all entries")
-        context.removeAllBlockingEntries()
-        context.removeAllIdentificationEntries()
-      }
+    if let pattern = sharedUserDefaults?.string(forKey: "phonePattern"),
+       let range = patternToRange(pattern: pattern)
+    {
+      let start = range.start
+      let end = range.end
 
-      if action == "addPrefix" {
-        var blockedNumbers = Int64(sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0)
+      print("Blocking numbers from \(start) to \(end) (pattern: \(pattern))")
+      for number in start...end {
+        context.addBlockingEntry(withNextSequentialPhoneNumber: number)
 
-        if let pattern = sharedUserDefaults?.string(forKey: "phonePattern"),
-          let range = patternToRange(pattern)
-        {
-          let start = range.start
-          let end = range.end
+        blockedNumbers += 1
 
-          print("Blocking numbers from \(start) to \(end) (pattern: \(pattern))")
-          for number in start...end {
-            context.addBlockingEntry(withNextSequentialPhoneNumber: number)
-
-            blockedNumbers += 1
-
-            if blockedNumbers % 1000 == 0 {
-              sharedUserDefaults?.set(blockedNumbers, forKey: "blockedNumbers")
-            }
-          }
+        if blockedNumbers % 1000 == 0 {
+          sharedUserDefaults?.set(blockedNumbers, forKey: "blockedNumbers")
         }
       }
     }
-
-    context.completeRequest()
   }
 }
 
