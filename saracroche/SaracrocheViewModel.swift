@@ -2,11 +2,29 @@ import CallKit
 import Combine
 import SwiftUI
 
+enum BlockerExtensionStatus {
+  case enabled
+  case disabled
+  case error
+  case unexpected
+  case unknown
+}
+
+enum BlockerActionState {
+  case update
+  case delete
+  case finish
+  case nothing
+}
+
 class SaracrocheViewModel: ObservableObject {
-  @Published var isBlockerEnabled: Bool = false
-  @Published var blockerStatusMessage: String = "Vérification du statut..."
-  @Published var blockerUpdateStatusMessage: String = ""
-  @Published var blocklistVersion: String = "1"
+  @Published var blockerExtensionStatus: BlockerExtensionStatus = .unknown
+  @Published var blockerActionState: BlockerActionState = .nothing
+  @Published var blockerPhoneNumberBlocked: Int64 = 0
+  @Published var blockerPhoneNumberTotal: Int64 = 0
+  @Published var blocklistInstalledVersion: String = ""
+  @Published var blocklistVersion: String = "2.0"
+  @Published var showBlockerStatusSheet: Bool = false
 
   private var statusTimer: Timer? = nil
   private var updateTimer: Timer? = nil
@@ -41,76 +59,73 @@ class SaracrocheViewModel: ObservableObject {
   let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
 
   init() {
-    checkBlockerStatus()
-    startStatusTimer()
+    checkBlockerExtensionStatus()
+    startTimerBlockerExtensionStatus()
     startUpdateTimer()
   }
 
   deinit {
-    stopStatusTimer()
+    stopStatusBlockerExtensionStatus()
     stopUpdateTimer()
   }
 
-  func checkBlockerStatus() {
-    let blockerStatus = sharedUserDefaults?.string(forKey: "blockerStatus") ?? ""
-    if blockerStatus == "update" { return }
+  func checkBlockerExtensionStatus() {
     let manager = CXCallDirectoryManager.sharedInstance
 
     manager.getEnabledStatusForExtension(withIdentifier: "com.cbouvat.saracroche.blocker") {
       status, error in
       DispatchQueue.main.async {
         if error != nil {
-          self.isBlockerEnabled = false
-          self.blockerStatusMessage = "Erreur"
+          self.blockerExtensionStatus = .error
           return
         }
 
         switch status {
         case .enabled:
-          self.isBlockerEnabled = true
-          self.blockerStatusMessage = "Le bloqueur d'appels est actif"
+          self.blockerExtensionStatus = .enabled
         case .disabled:
-          self.isBlockerEnabled = false
-          self.blockerStatusMessage = "Le bloqueur d'appels n'est pas activé"
+          self.blockerExtensionStatus = .disabled
         case .unknown:
-          self.isBlockerEnabled = false
-          self.blockerStatusMessage = "Statut inconnu"
+          self.blockerExtensionStatus = .unknown
         @unknown default:
-          self.isBlockerEnabled = false
-          self.blockerStatusMessage = "Statut inattendu"
+          self.blockerExtensionStatus = .unexpected
         }
       }
     }
   }
 
-  func updateBlockerStatusMessage() {
+  func updateBlockerState() {
+    let blockerActionState = sharedUserDefaults?.string(forKey: "blockerActionState") ?? ""
     let blockedNumbers = sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0
     let totalBlockedNumbers = sharedUserDefaults?.integer(forKey: "totalBlockedNumbers") ?? 0
-    let blockerStatus = sharedUserDefaults?.string(forKey: "blockerStatus") ?? ""
+    let blocklistInstalledVersion = sharedUserDefaults?.string(forKey: "blocklistVersion") ?? ""
 
-    if blockerStatus == "active" {
-      self.blockerUpdateStatusMessage = "\(blockedNumbers) numéros bloqués"
-    } else if blockerStatus == "update" {
-      if blockedNumbers == 0 {
-        self.blockerUpdateStatusMessage =
-          "Installation de la liste de blocage en cours"
-      } else {
-        let percentage = totalBlockedNumbers > 0 ? (blockedNumbers * 100) / totalBlockedNumbers : 0
-        self.blockerUpdateStatusMessage =
-          "Installation de la liste de blocage en cours\n\n\(blockedNumbers) sur \(totalBlockedNumbers) numéros soit \(percentage)%"
-      }
-    } else if blockerStatus == "delete" {
-      self.blockerUpdateStatusMessage = "Suppression de la liste de blocage en cours"
+    if blockerActionState == "update" {
+      self.blockerActionState = .update
+    } else if blockerActionState == "delete" {
+      self.blockerActionState = .delete
+    } else if blockerActionState == "finish" {
+      self.blockerActionState = .finish
     } else {
-      self.blockerUpdateStatusMessage = "Aucun numéro bloqué, installer la liste de blocage"
+      self.blockerActionState = .nothing
+    }
+
+    self.blockerPhoneNumberBlocked = Int64(blockedNumbers)
+    self.blockerPhoneNumberTotal = Int64(totalBlockedNumbers)
+    self.blocklistInstalledVersion = blocklistInstalledVersion
+
+    if self.blockerActionState == .update || self.blockerActionState == .delete
+      || self.blockerActionState == .finish
+    {
+      self.showBlockerStatusSheet = true
+    } else {
+      self.showBlockerStatusSheet = false
     }
   }
 
-  func reloadBlockerListExtension() {
-    let totalCount = countAllBlockedNumbers()
-
-    sharedUserDefaults?.set("update", forKey: "blockerStatus")
-    sharedUserDefaults?.set(totalCount, forKey: "totalBlockedNumbers")
+  func updateBlockerList() {
+    sharedUserDefaults?.set("update", forKey: "blockerActionState")
+    sharedUserDefaults?.set(countAllBlockedNumbers(), forKey: "totalBlockedNumbers")
     sharedUserDefaults?.set(0, forKey: "blockedNumbers")
     sharedUserDefaults?.set(self.blocklistVersion, forKey: "blocklistVersion")
 
@@ -118,6 +133,9 @@ class SaracrocheViewModel: ObservableObject {
     let manager = CXCallDirectoryManager.sharedInstance
 
     func processNextPattern() {
+      if sharedUserDefaults?.string(forKey: "blockerActionState") != "update" {
+        return
+      }
       sharedUserDefaults?.set("addPrefix", forKey: "action")
       if !patternsToProcess.isEmpty {
         let pattern = patternsToProcess.removeFirst()
@@ -127,14 +145,14 @@ class SaracrocheViewModel: ObservableObject {
         manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
           DispatchQueue.main.async {
             if error != nil {
-              self.blockerStatusMessage = "Erreur lors du rechargement"
+              self.blockerExtensionStatus = .error
             }
 
             processNextPattern()
           }
         }
       } else {
-        sharedUserDefaults?.set("active", forKey: "blockerStatus")
+        sharedUserDefaults?.set("finish", forKey: "blockerActionState")
       }
     }
 
@@ -142,7 +160,7 @@ class SaracrocheViewModel: ObservableObject {
     manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
       DispatchQueue.main.async {
         if error != nil {
-          self.blockerStatusMessage = "Erreur lors du rechargement"
+          self.blockerExtensionStatus = .error
         }
 
         processNextPattern()
@@ -150,11 +168,14 @@ class SaracrocheViewModel: ObservableObject {
     }
   }
 
+  func cancelUpdateBlockerAction() {
+    sharedUserDefaults?.set("", forKey: "blockerActionState")
+    updateBlockerState()
+  }
+
   func removeBlockerList() {
-    sharedUserDefaults?.set("delete", forKey: "blockerStatus")
-    sharedUserDefaults?.set(0, forKey: "totalBlockedNumbers")
+    sharedUserDefaults?.set("delete", forKey: "blockerActionState")
     sharedUserDefaults?.set(0, forKey: "blockedNumbers")
-    sharedUserDefaults?.set("", forKey: "blocklistVersion")
 
     let manager = CXCallDirectoryManager.sharedInstance
 
@@ -162,12 +183,21 @@ class SaracrocheViewModel: ObservableObject {
     manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
       DispatchQueue.main.async {
         if error != nil {
-          self.blockerStatusMessage = "Erreur lors de la suppression"
-        } else {
-          self.sharedUserDefaults?.set("", forKey: "blockerStatus")
+          self.blockerExtensionStatus = .error
         }
+        self.sharedUserDefaults?.set("", forKey: "blockerActionState")
       }
     }
+  }
+
+  func cancelRemoveBlockerAction() {
+    sharedUserDefaults?.set("", forKey: "blockerActionState")
+    updateBlockerState()
+  }
+
+  func markBlockerActionFinished() {
+    sharedUserDefaults?.set("", forKey: "blockerActionState")
+    updateBlockerState()
   }
 
   func openSettings() {
@@ -191,34 +221,25 @@ class SaracrocheViewModel: ObservableObject {
     return totalCount
   }
 
-  private func startStatusTimer() {
+  private func startTimerBlockerExtensionStatus() {
     statusTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-      self?.checkBlockerStatus()
+      self?.checkBlockerExtensionStatus()
     }
   }
 
-  private func stopStatusTimer() {
+  private func stopStatusBlockerExtensionStatus() {
     statusTimer?.invalidate()
     statusTimer = nil
   }
 
   private func startUpdateTimer() {
     updateTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
-      self?.updateBlockerStatusMessage()
+      self?.updateBlockerState()
     }
   }
 
   private func stopUpdateTimer() {
     updateTimer?.invalidate()
     updateTimer = nil
-  }
-
-  var isUpdateAvailable: Bool {
-    let installedVersion = sharedUserDefaults?.string(forKey: "blocklistVersion") ?? ""
-    return installedVersion != blocklistVersion
-  }
-
-  var blockerStatus: String {
-    return sharedUserDefaults?.string(forKey: "blockerStatus") ?? ""
   }
 }
