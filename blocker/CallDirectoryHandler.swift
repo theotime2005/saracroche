@@ -8,7 +8,9 @@ import Foundation
 
 class CallDirectoryHandler: CXCallDirectoryProvider {
 
-  let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
+  let sharedUserDefaults = UserDefaults(
+    suiteName: "group.com.cbouvat.saracroche"
+  )
 
   override func beginRequest(with context: CXCallDirectoryExtensionContext) {
     context.delegate = self
@@ -56,10 +58,12 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
   private func handleAddPrefix(to context: CXCallDirectoryExtensionContext) {
     print("Adding prefix entries")
-    var blockedNumbers = Int64(sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0)
+    var blockedNumbers = Int64(
+      sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0
+    )
 
     if let pattern = sharedUserDefaults?.string(forKey: "phonePattern"),
-       let range = patternToRange(pattern: pattern)
+      let range = patternToRange(pattern: pattern)
     {
       let start = range.start
       let end = range.end
@@ -80,8 +84,10 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
 extension CallDirectoryHandler: CXCallDirectoryExtensionContextDelegate {
 
-  func requestFailed(for extensionContext: CXCallDirectoryExtensionContext, withError error: Error)
-  {
+  func requestFailed(
+    for extensionContext: CXCallDirectoryExtensionContext,
+    withError error: Error
+  ) {
     // An error occurred while adding blocking or identification entries, check the NSError for details.
     // For Call Directory error codes, see the CXErrorCodeCallDirectoryManagerError enum in <CallKit/CXError.h>.
     //

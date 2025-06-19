@@ -56,7 +56,9 @@ class SaracrocheViewModel: ObservableObject {
     "33939XXXXXX",
   ]
 
-  let sharedUserDefaults = UserDefaults(suiteName: "group.com.cbouvat.saracroche")
+  let sharedUserDefaults = UserDefaults(
+    suiteName: "group.com.cbouvat.saracroche"
+  )
 
   init() {
     checkBlockerExtensionStatus()
@@ -72,8 +74,11 @@ class SaracrocheViewModel: ObservableObject {
   func checkBlockerExtensionStatus() {
     let manager = CXCallDirectoryManager.sharedInstance
 
-    manager.getEnabledStatusForExtension(withIdentifier: "com.cbouvat.saracroche.blocker") {
-      status, error in
+    manager.getEnabledStatusForExtension(
+      withIdentifier: "com.cbouvat.saracroche.blocker"
+    ) {
+      status,
+      error in
       DispatchQueue.main.async {
         if error != nil {
           self.blockerExtensionStatus = .error
@@ -95,10 +100,14 @@ class SaracrocheViewModel: ObservableObject {
   }
 
   func updateBlockerState() {
-    let blockerActionState = sharedUserDefaults?.string(forKey: "blockerActionState") ?? ""
-    let blockedNumbers = sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0
-    let totalBlockedNumbers = sharedUserDefaults?.integer(forKey: "totalBlockedNumbers") ?? 0
-    let blocklistInstalledVersion = sharedUserDefaults?.string(forKey: "blocklistVersion") ?? ""
+    let blockerActionState =
+      sharedUserDefaults?.string(forKey: "blockerActionState") ?? ""
+    let blockedNumbers =
+      sharedUserDefaults?.integer(forKey: "blockedNumbers") ?? 0
+    let totalBlockedNumbers =
+      sharedUserDefaults?.integer(forKey: "totalBlockedNumbers") ?? 0
+    let blocklistInstalledVersion =
+      sharedUserDefaults?.string(forKey: "blocklistVersion") ?? ""
 
     if blockerActionState == "update" {
       self.blockerActionState = .update
@@ -125,7 +134,10 @@ class SaracrocheViewModel: ObservableObject {
 
   func updateBlockerList() {
     sharedUserDefaults?.set("update", forKey: "blockerActionState")
-    sharedUserDefaults?.set(countAllBlockedNumbers(), forKey: "totalBlockedNumbers")
+    sharedUserDefaults?.set(
+      countAllBlockedNumbers(),
+      forKey: "totalBlockedNumbers"
+    )
     sharedUserDefaults?.set(0, forKey: "blockedNumbers")
     sharedUserDefaults?.set(self.blocklistVersion, forKey: "blocklistVersion")
 
@@ -142,7 +154,9 @@ class SaracrocheViewModel: ObservableObject {
 
         sharedUserDefaults?.set(pattern, forKey: "phonePattern")
 
-        manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
+        manager.reloadExtension(
+          withIdentifier: "com.cbouvat.saracroche.blocker"
+        ) { error in
           DispatchQueue.main.async {
             if error != nil {
               self.blockerExtensionStatus = .error
@@ -157,7 +171,8 @@ class SaracrocheViewModel: ObservableObject {
     }
 
     sharedUserDefaults?.set("reset", forKey: "action")
-    manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
+    manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") {
+      error in
       DispatchQueue.main.async {
         if error != nil {
           self.blockerExtensionStatus = .error
@@ -180,7 +195,8 @@ class SaracrocheViewModel: ObservableObject {
     let manager = CXCallDirectoryManager.sharedInstance
 
     sharedUserDefaults?.set("reset", forKey: "action")
-    manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") { error in
+    manager.reloadExtension(withIdentifier: "com.cbouvat.saracroche.blocker") {
+      error in
       DispatchQueue.main.async {
         if error != nil {
           self.blockerExtensionStatus = .error
@@ -204,7 +220,9 @@ class SaracrocheViewModel: ObservableObject {
     let manager = CXCallDirectoryManager.sharedInstance
     manager.openSettings(completionHandler: { error in
       if let error = error {
-        print("Erreur lors de l'ouverture des réglages: \(error.localizedDescription)")
+        print(
+          "Erreur lors de l'ouverture des réglages: \(error.localizedDescription)"
+        )
       }
     })
   }
@@ -222,7 +240,8 @@ class SaracrocheViewModel: ObservableObject {
   }
 
   private func startTimerBlockerExtensionStatus() {
-    statusTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+    statusTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) {
+      [weak self] _ in
       self?.checkBlockerExtensionStatus()
     }
   }
@@ -233,7 +252,8 @@ class SaracrocheViewModel: ObservableObject {
   }
 
   private func startUpdateTimer() {
-    updateTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
+    updateTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) {
+      [weak self] _ in
       self?.updateBlockerState()
     }
   }

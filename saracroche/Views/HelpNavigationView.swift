@@ -157,7 +157,9 @@ struct HelpNavigationView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button {
-              if let url = URL(string: "https://github.com/cbouvat/saracroche/issues") {
+              if let url = URL(
+                string: "https://github.com/cbouvat/saracroche/issues"
+              ) {
                 UIApplication.shared.open(url)
               }
             } label: {
@@ -171,7 +173,9 @@ struct HelpNavigationView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button {
-              if let url = URL(string: "mailto:saracroche@cbouvat.com?subject=Signalement bug") {
+              if let url = URL(
+                string: "mailto:saracroche@cbouvat.com?subject=Signalement bug"
+              ) {
                 UIApplication.shared.open(url)
               }
             } label: {
