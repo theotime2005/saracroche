@@ -1,4 +1,4 @@
-import StoreKit
+import SwiftUI
 
 struct FullWidthButtonStyle: ButtonStyle {
   var backgroundColor: Color
