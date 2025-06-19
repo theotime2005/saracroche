@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsNavigationView: View {
   @ObservedObject var viewModel: SaracrocheViewModel
   @Binding var showDeleteConfirmation: Bool
-  var requestReview: () -> Void
   var body: some View {
     NavigationView {
       Form {
@@ -78,7 +77,12 @@ struct SettingsNavigationView: View {
 
         Section(header: Text("Application")) {
           Button {
-            requestReview()
+            if let url = URL(
+              string:
+                "https://apps.apple.com/app/id6743679292?action=write-review"
+            ) {
+              UIApplication.shared.open(url)
+            }
           } label: {
             Label("Noter l'application", systemImage: "star.fill")
           }

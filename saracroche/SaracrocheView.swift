@@ -1,5 +1,4 @@
 import StoreKit
-import SwiftUI
 
 struct FullWidthButtonStyle: ButtonStyle {
   var backgroundColor: Color
@@ -31,7 +30,6 @@ extension ButtonStyle where Self == FullWidthButtonStyle {
 struct SaracrocheView: View {
   @StateObject private var viewModel = SaracrocheViewModel()
   @State private var showDeleteConfirmation = false
-  @Environment(\.requestReview) var requestReview
 
   var body: some View {
     TabView {
@@ -43,14 +41,13 @@ struct SaracrocheView: View {
         .tabItem {
           Label("Signaler", systemImage: "exclamationmark.bubble.fill")
         }
-      HelpNavigationView(requestReview: { requestReview() })
+      HelpNavigationView()
         .tabItem {
           Label("Aide", systemImage: "questionmark.circle.fill")
         }
       SettingsNavigationView(
         viewModel: viewModel,
-        showDeleteConfirmation: $showDeleteConfirmation,
-        requestReview: { requestReview() }
+        showDeleteConfirmation: $showDeleteConfirmation
       )
       .tabItem {
         Label("Réglages", systemImage: "gearshape.fill")
