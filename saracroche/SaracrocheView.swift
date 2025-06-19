@@ -18,8 +18,13 @@ struct FullWidthButtonStyle: ButtonStyle {
 }
 
 extension ButtonStyle where Self == FullWidthButtonStyle {
-  static func fullWidth(background: Color, foreground: Color) -> FullWidthButtonStyle {
-    return FullWidthButtonStyle(backgroundColor: background, foregroundColor: foreground)
+  static func fullWidth(background: Color, foreground: Color)
+    -> FullWidthButtonStyle
+  {
+    return FullWidthButtonStyle(
+      backgroundColor: background,
+      foregroundColor: foreground
+    )
   }
 }
 
@@ -43,7 +48,8 @@ struct SaracrocheView: View {
           Label("Aide", systemImage: "questionmark.circle.fill")
         }
       SettingsNavigationView(
-        viewModel: viewModel, showDeleteConfirmation: $showDeleteConfirmation,
+        viewModel: viewModel,
+        showDeleteConfirmation: $showDeleteConfirmation,
         requestReview: { requestReview() }
       )
       .tabItem {

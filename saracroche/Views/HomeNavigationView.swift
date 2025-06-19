@@ -16,8 +16,13 @@ struct HomeNavigationView: View {
                       ? "checkmark.shield.fill" : "xmark.circle.fill"
                   )
                   .font(.system(size: 48))
-                  .symbolEffect(.bounce.up.byLayer, options: .repeat(.periodic(delay: 1.0)))
-                  .foregroundColor(viewModel.blockerExtensionStatus == .enabled ? .green : .red)
+                  .symbolEffect(
+                    .bounce.up.byLayer,
+                    options: .repeat(.periodic(delay: 1.0))
+                  )
+                  .foregroundColor(
+                    viewModel.blockerExtensionStatus == .enabled ? .green : .red
+                  )
                   .padding(.bottom)
                 } else {
                   Image(
@@ -25,7 +30,9 @@ struct HomeNavigationView: View {
                       ? "checkmark.shield.fill" : "xmark.circle.fill"
                   )
                   .font(.system(size: 48))
-                  .foregroundColor(viewModel.blockerExtensionStatus == .enabled ? .green : .red)
+                  .foregroundColor(
+                    viewModel.blockerExtensionStatus == .enabled ? .green : .red
+                  )
                   .padding(.bottom)
                 }
 
@@ -70,7 +77,9 @@ struct HomeNavigationView: View {
                     Text("Activer dans les réglages")
                   }
                 }
-                .buttonStyle(.fullWidth(background: Color.red, foreground: .white))
+                .buttonStyle(
+                  .fullWidth(background: Color.red, foreground: .white)
+                )
               }
             }
             .padding()
@@ -125,8 +134,12 @@ struct HomeNavigationView: View {
                       Text("Installer la liste de blocage")
                     }
                   }
-                  .buttonStyle(.fullWidth(background: Color.blue, foreground: .white))
-                } else if viewModel.blocklistVersion != viewModel.blocklistInstalledVersion {
+                  .buttonStyle(
+                    .fullWidth(background: Color.blue, foreground: .white)
+                  )
+                } else if viewModel.blocklistVersion
+                  != viewModel.blocklistInstalledVersion
+                {
                   Image(
                     systemName: "arrow.clockwise.circle.fill"
                   )
@@ -159,8 +172,12 @@ struct HomeNavigationView: View {
                       Text("Mettre à jour la liste de blocage")
                     }
                   }
-                  .buttonStyle(.fullWidth(background: Color.red, foreground: .white))
-                } else if viewModel.blockerPhoneNumberBlocked != viewModel.blockerPhoneNumberTotal {
+                  .buttonStyle(
+                    .fullWidth(background: Color.red, foreground: .white)
+                  )
+                } else if viewModel.blockerPhoneNumberBlocked
+                  != viewModel.blockerPhoneNumberTotal
+                {
                   Image(
                     systemName: "exclamationmark.triangle.fill"
                   )
@@ -172,10 +189,12 @@ struct HomeNavigationView: View {
                     .fontWeight(.semibold)
                     .padding(.top)
 
-                  Text("\(viewModel.blockerPhoneNumberBlocked) numéros bloqués sur \(viewModel.blockerPhoneNumberTotal)")
-                    .font(.body)
-                    .padding(.vertical)
-                    .multilineTextAlignment(.center)
+                  Text(
+                    "\(viewModel.blockerPhoneNumberBlocked) numéros bloqués sur \(viewModel.blockerPhoneNumberTotal)"
+                  )
+                  .font(.body)
+                  .padding(.vertical)
+                  .multilineTextAlignment(.center)
 
                   Button {
                     viewModel.updateBlockerList()
@@ -185,7 +204,9 @@ struct HomeNavigationView: View {
                       Text("Mettre à jour la liste de blocage")
                     }
                   }
-                  .buttonStyle(.fullWidth(background: Color.red, foreground: .white))
+                  .buttonStyle(
+                    .fullWidth(background: Color.red, foreground: .white)
+                  )
                 } else {
                   Image(
                     systemName: "checklist.checked"
@@ -200,9 +221,11 @@ struct HomeNavigationView: View {
                   .fontWeight(.semibold)
                   .padding(.top)
 
-                  Text("Version de la liste de blocage : \(viewModel.blocklistVersion)")
-                    .font(.footnote)
-                    .padding(.top, 2)
+                  Text(
+                    "Version de la liste de blocage : \(viewModel.blocklistVersion)"
+                  )
+                  .font(.footnote)
+                  .padding(.top, 2)
                 }
               }
               .padding()

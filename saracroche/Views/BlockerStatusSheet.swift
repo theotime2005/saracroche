@@ -12,16 +12,23 @@ struct BlockerStatusSheet: View {
           .multilineTextAlignment(.center)
 
         if #available(iOS 18.0, *) {
-          Image(systemName: "gearshape.arrow.trianglehead.2.clockwise.rotate.90")
-            .font(.system(size: 100))
-            .symbolEffect(.rotate.byLayer, options: .repeat(.periodic(delay: 0.5)))
-            .foregroundColor(Color("AppColor"))
-            .padding(.top)
+          Image(
+            systemName: "gearshape.arrow.trianglehead.2.clockwise.rotate.90"
+          )
+          .font(.system(size: 100))
+          .symbolEffect(
+            .rotate.byLayer,
+            options: .repeat(.periodic(delay: 0.5))
+          )
+          .foregroundColor(Color("AppColor"))
+          .padding(.top)
         } else {
-          Image(systemName: "gearshape.arrow.trianglehead.2.clockwise.rotate.90")
-            .font(.system(size: 100))
-            .foregroundColor(Color("AppColor"))
-            .padding(.top)
+          Image(
+            systemName: "gearshape.arrow.trianglehead.2.clockwise.rotate.90"
+          )
+          .font(.system(size: 100))
+          .foregroundColor(Color("AppColor"))
+          .padding(.top)
         }
 
         Text("Installation de la liste de blocage")
@@ -70,7 +77,10 @@ struct BlockerStatusSheet: View {
         if #available(iOS 18.0, *) {
           Image(systemName: "trash.fill")
             .font(.system(size: 100))
-            .symbolEffect(.wiggle.clockwise.byLayer, options: .repeat(.periodic(delay: 1.0)))
+            .symbolEffect(
+              .wiggle.clockwise.byLayer,
+              options: .repeat(.periodic(delay: 1.0))
+            )
             .foregroundColor(.red)
             .padding(.top)
         } else {
@@ -85,10 +95,12 @@ struct BlockerStatusSheet: View {
           .fontWeight(.bold)
           .multilineTextAlignment(.center)
 
-        Text("Cette action peut prendre plusieurs secondes. Veuillez patienter.")
-          .font(.footnote)
-          .padding(.top)
-          .multilineTextAlignment(.center)
+        Text(
+          "Cette action peut prendre plusieurs secondes. Veuillez patienter."
+        )
+        .font(.footnote)
+        .padding(.top)
+        .multilineTextAlignment(.center)
 
         Button("Annuler") {
           viewModel.cancelRemoveBlockerAction()
@@ -105,7 +117,10 @@ struct BlockerStatusSheet: View {
         if #available(iOS 18.0, *) {
           Image(systemName: "checkmark.circle.fill")
             .font(.system(size: 100))
-            .symbolEffect(.wiggle.counterClockwise.byLayer, options: .repeat(.periodic(delay: 0.5)))
+            .symbolEffect(
+              .wiggle.counterClockwise.byLayer,
+              options: .repeat(.periodic(delay: 0.5))
+            )
             .foregroundColor(Color.green)
             .padding(.top)
         } else {
@@ -123,7 +138,9 @@ struct BlockerStatusSheet: View {
         Button("Fermer") {
           viewModel.markBlockerActionFinished()
         }
-        .buttonStyle(.fullWidth(background: Color("AppColor"), foreground: .black))
+        .buttonStyle(
+          .fullWidth(background: Color("AppColor"), foreground: .black)
+        )
         .padding(.top)
       }
     }

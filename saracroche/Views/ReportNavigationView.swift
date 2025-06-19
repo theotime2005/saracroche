@@ -21,7 +21,9 @@ struct ReportNavigationView: View {
           }
 
           Button {
-            if let url = URL(string: "mailto:saracroche@cbouvat.com?subject=Signalement numéro") {
+            if let url = URL(
+              string: "mailto:saracroche@cbouvat.com?subject=Signalement numéro"
+            ) {
               UIApplication.shared.open(url)
             }
           } label: {
@@ -30,7 +32,9 @@ struct ReportNavigationView: View {
               Text("Signaler un numéro")
             }
           }
-          .buttonStyle(.fullWidth(background: Color("AppColor"), foreground: .black))
+          .buttonStyle(
+            .fullWidth(background: Color("AppColor"), foreground: .black)
+          )
           .padding(.top)
         }
         .padding()

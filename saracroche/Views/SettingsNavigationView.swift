@@ -13,7 +13,8 @@ struct SettingsNavigationView: View {
           } label: {
             Label(
               "L’extension de blocage dans Réglages",
-              systemImage: "gear")
+              systemImage: "gear"
+            )
           }
         }
 
@@ -54,7 +55,10 @@ struct SettingsNavigationView: View {
               UIApplication.shared.open(url)
             }
           } label: {
-            Label("Code source sur GitHub", systemImage: "chevron.left.slash.chevron.right")
+            Label(
+              "Code source sur GitHub",
+              systemImage: "chevron.left.slash.chevron.right"
+            )
           }
           Button {
             if let url = URL(string: "https://cbouvat.com/saracroche") {
