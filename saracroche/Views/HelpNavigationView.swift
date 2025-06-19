@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct HelpNavigationView: View {
-  var requestReview: () -> Void
   var body: some View {
     NavigationStack {
       ScrollView {
@@ -129,7 +128,12 @@ struct HelpNavigationView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button {
-              requestReview()
+              if let url = URL(
+                string:
+                  "https://apps.apple.com/app/id6743679292?action=write-review"
+              ) {
+                UIApplication.shared.open(url)
+              }
             } label: {
               HStack {
                 Image(systemName: "star.fill")
