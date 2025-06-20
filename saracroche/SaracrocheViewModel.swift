@@ -133,6 +133,7 @@ class SaracrocheViewModel: ObservableObject {
   }
 
   func updateBlockerList() {
+    UIApplication.shared.isIdleTimerDisabled = true
     sharedUserDefaults?.set("update", forKey: "blockerActionState")
     sharedUserDefaults?.set(
       countAllBlockedNumbers(),
@@ -167,6 +168,7 @@ class SaracrocheViewModel: ObservableObject {
         }
       } else {
         sharedUserDefaults?.set("finish", forKey: "blockerActionState")
+        UIApplication.shared.isIdleTimerDisabled = false
       }
     }
 
@@ -184,11 +186,13 @@ class SaracrocheViewModel: ObservableObject {
   }
 
   func cancelUpdateBlockerAction() {
+    UIApplication.shared.isIdleTimerDisabled = false
     sharedUserDefaults?.set("", forKey: "blockerActionState")
     updateBlockerState()
   }
 
   func removeBlockerList() {
+    UIApplication.shared.isIdleTimerDisabled = true
     sharedUserDefaults?.set("delete", forKey: "blockerActionState")
     sharedUserDefaults?.set(0, forKey: "blockedNumbers")
 
@@ -202,16 +206,19 @@ class SaracrocheViewModel: ObservableObject {
           self.blockerExtensionStatus = .error
         }
         self.sharedUserDefaults?.set("", forKey: "blockerActionState")
+        UIApplication.shared.isIdleTimerDisabled = false
       }
     }
   }
 
   func cancelRemoveBlockerAction() {
+    UIApplication.shared.isIdleTimerDisabled = false
     sharedUserDefaults?.set("", forKey: "blockerActionState")
     updateBlockerState()
   }
 
   func markBlockerActionFinished() {
+    UIApplication.shared.isIdleTimerDisabled = false
     sharedUserDefaults?.set("", forKey: "blockerActionState")
     updateBlockerState()
   }
