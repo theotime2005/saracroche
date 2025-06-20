@@ -7,10 +7,12 @@ struct HelpNavigationView: View {
         VStack {
           GroupBox(
             label:
-              Label(
-                "Quels numéros sont bloqués ?",
-                systemImage: "questionmark.circle.fill"
-              )
+              Label {
+                Text("Quels numéros sont bloqués ?")
+              } icon: {
+                Image(systemName: "questionmark.circle.fill")
+                  .foregroundStyle(.blue)
+              }
           ) {
             Text(
               "L'application bloque les préfixes suivants, communiqués par l'ARCEP : 0162, 0163, 0270, 0271, 0377, 0378, 0424, 0425, 0568, 0569, 0948, 0949, ainsi que ceux allant de 09475 à 09479. Ces préfixes sont réservés au démarchage téléphonique."
@@ -23,10 +25,12 @@ struct HelpNavigationView: View {
 
           GroupBox(
             label:
-              Label(
-                "Comment fonctionne l'application ?",
-                systemImage: "info.circle.fill"
-              )
+              Label {
+                Text("Comment fonctionne l'application ?")
+              } icon: {
+                Image(systemName: "info.circle.fill")
+                  .foregroundStyle(.teal)
+              }
           ) {
             Text(
               "L'application utilise une extension de blocage d'appels et de SMS fournie par le système pour filtrer les numéros indésirables. Elle est conçue pour être simple et efficace, sans nécessiter de configuration complexe."
@@ -39,10 +43,12 @@ struct HelpNavigationView: View {
 
           GroupBox(
             label:
-              Label(
-                "Comment signaler un numéro ?",
-                systemImage: "exclamationmark.shield.fill"
-              )
+              Label {
+                Text("Comment signaler un numéro ?")
+              } icon: {
+                Image(systemName: "exclamationmark.shield.fill")
+                  .foregroundStyle(.orange)
+              }
           ) {
             Text(
               "Pour signaler un numéro indésirable, utilisez le bouton 'Signaler' dans l'onglet 'Signaler'. Cela aidera à améliorer la liste de blocage et à rendre l'application plus efficace."
@@ -55,10 +61,14 @@ struct HelpNavigationView: View {
 
           GroupBox(
             label:
-              Label(
-                "Pourquoi les numéros bloqués apparaissent-ils dans l'historique des appels ?",
-                systemImage: "clock.fill"
-              )
+              Label {
+                Text(
+                  "Pourquoi les numéros bloqués apparaissent-ils dans l'historique des appels ?"
+                )
+              } icon: {
+                Image(systemName: "clock.fill")
+                  .foregroundStyle(.purple)
+              }
           ) {
             Text(
               "Depuis iOS 18, les numéros bloqués par les extensions de blocage d'appels sont visibles dans l'historique des appels. Cela permet de garder une trace des appels bloqués, mais ne signifie pas que l'appel a été reçu ou que vous devez y répondre."
@@ -71,10 +81,12 @@ struct HelpNavigationView: View {
 
           GroupBox(
             label:
-              Label(
-                "Comment participer au projet ?",
-                systemImage: "gift.fill"
-              )
+              Label {
+                Text("Comment participer au projet ?")
+              } icon: {
+                Image(systemName: "gift.fill")
+                  .foregroundStyle(.pink)
+              }
           ) {
             Text(
               "L'application Saracroche est open source et développée bénévolement. Vous pouvez soutenir le projet, ce qui est précieux pour maintenir et améliorer l'application."
@@ -115,10 +127,12 @@ struct HelpNavigationView: View {
 
           GroupBox(
             label:
-              Label(
-                "Comment noter l'application ?",
-                systemImage: "star.fill"
-              )
+              Label {
+                Text("Comment noter l'application ?")
+              } icon: {
+                Image(systemName: "star.fill")
+                  .foregroundStyle(.yellow)
+              }
           ) {
             Text(
               "Si l'application Saracroche vous est utile, une évaluation sur l'App Store serait appréciée. Ce soutien aide à toucher davantage de personnes et à améliorer continuellement l'application."
@@ -148,10 +162,12 @@ struct HelpNavigationView: View {
 
           GroupBox(
             label:
-              Label(
-                "Comment signaler un bug ?",
-                systemImage: "ladybug.fill"
-              )
+              Label {
+                Text("Comment signaler un bug ?")
+              } icon: {
+                Image(systemName: "ladybug.fill")
+                  .foregroundStyle(.red)
+              }
           ) {
             Text(
               "En cas de bug ou de problème avec l'application, merci de le signaler sur GitHub ou par e-mail."
@@ -196,10 +212,12 @@ struct HelpNavigationView: View {
 
           GroupBox(
             label:
-              Label(
-                "Pourquoi l'application est-elle gratuite ?",
-                systemImage: "dollarsign.circle.fill"
-              )
+              Label {
+                Text("Pourquoi l'application est-elle gratuite ?")
+              } icon: {
+                Image(systemName: "dollarsign.circle.fill")
+                  .foregroundStyle(.green)
+              }
           ) {
             Text(
               "L'application Saracroche est gratuite et sans publicité. Elle est développée bénévolement par un développeur indépendant (Camille), qui en avait assez de recevoir des appels indésirables. L'application est développée sur son temps libre. Vous pouvez soutenir le projet en faisant un don sur GitHub ou Liberapay."
