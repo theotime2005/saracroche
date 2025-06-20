@@ -228,6 +228,24 @@ struct HelpNavigationView: View {
           }
           .padding(.bottom)
 
+          GroupBox(
+            label:
+              Label {
+                Text("Respect de la vie privée")
+              } icon: {
+                Image(systemName: "lock.shield.fill")
+                  .foregroundStyle(.gray)
+              }
+          ) {
+            Text(
+              "Saracroche ne collecte aucune donnée personnelle, n'utilise aucun service tiers et ne transmet aucune information à qui que ce soit. Toutes les données restent sur votre appareil. Le respect de votre vie privée est un droit fondamental même si vous n'avez rien à cacher."
+            )
+            .font(.body)
+            .padding(.top, 4)
+            .frame(maxWidth: .infinity, alignment: .leading)
+          }
+          .padding(.bottom)
+
           Text(
             "Bisous 😘"
           )
