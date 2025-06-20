@@ -34,6 +34,7 @@ struct SettingsNavigationView: View {
               "Supprimer la liste de blocage",
               systemImage: "trash.fill"
             )
+            .foregroundColor(.red)
           }
           .confirmationDialog(
             "Supprimer la liste de blocage",
